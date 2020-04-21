@@ -1,0 +1,197 @@
+:root {
+    --main-color: #6D8F9F;
+    --accent-color: #D0AE68;
+    --button-color: rgb(208, 120, 104);
+}
+
+html {
+    font-size: 20px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+#size-identificator {
+    width: 100px;
+    height: 20px;
+    display: inline-block;
+    background-color: blue;
+}
+
+.body-grid {
+    display: grid;
+    grid-template-areas: 
+        "navbar"
+        "content"
+        "footer";
+    grid-template-columns: 100vw;
+    grid-template-rows: auto 1fr auto;
+    margin: 0px;
+    min-height: 100vh;
+}
+
+nav {
+    padding: 1rem;
+    background-color: var(--main-color);
+    grid-area: navbar;
+}
+
+/* Style buttons */
+.btn {
+    background-color: transparent; /* Blue background */
+    border: 2px solid black; /* Remove borders */
+    border-radius: 9px;
+    padding: 12px 16px; /* Some padding */
+    font-size: 1rem; /* Set a font size */
+    cursor: pointer; /* Mouse pointer on hover */
+}
+  
+/* Darker background on mouse-over */
+.btn:hover {
+    background-color: rgba(96, 82, 179, 0.2);
+}
+
+.nav-divider {
+    display: inline-block;
+    height: 1.5rem;
+    width: 2px;
+    border-radius: 0.075rem;
+    margin: 0.2rem 0.2rem 0.2rem 0.2rem;
+    background-color: rgb(84, 92, 139);
+    vertical-align: middle;
+}
+
+.nav-logo {
+    height: 2rem;
+    vertical-align: middle;
+    margin-right: 1.75rem;
+}
+
+.nav-logo:hover {
+    cursor: pointer;
+}
+
+main {
+    grid-area: content;
+}
+
+.view-home {
+    background: linear-gradient(rgba(255,255,255,.7), rgba(255,255,255,.4)), url("/img/cat-background.jpg");
+    /* background-image: url(/img/cat-background.jpg); */
+    background-position: center 60%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-color: #464646;
+}
+
+.greeting-grid {
+    display: grid;
+    grid-template-rows: 1fr auto auto 2fr;
+    grid-template-areas: 
+        ". ."
+        "greeting greeting"
+        "adopt rescue"
+        ". .";
+    width: 100%;
+    height: 100%;
+    color: rgb(96, 82, 179);
+    font-family: sans-serif;
+}
+
+.greeting-entry {
+    padding-right: 25%;
+    font-family: 'Roboto', sans-serif;
+    font-size: 2.5rem;
+    grid-area: greeting;
+    padding: 1rem;
+}
+
+.greeting-entry p {
+    font-size: 1rem;
+    width: 50%;
+    color: black;
+    padding: 0.5rem;
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.06); /* Black w/opacity/see-through */
+    border-radius: 15px;
+}
+
+.adopt-entry {
+    grid-area: adopt;
+    padding: 1rem;
+    font-weight: bolder;
+    font-size: 1.7rem;
+    text-align: center;
+    color: rgb(49, 31, 150);
+}
+
+.rescue-entry {
+    grid-area: rescue;
+    padding: 1rem;
+    font-weight: bolder;
+    font-size: 1.7rem;
+    text-align: center;
+    color: rgb(49, 31, 150);
+}
+
+footer {
+    grid-area: footer;
+    padding: 0.5rem;
+    background-color: var(--button-color);
+}
+
+footer p {
+    text-align: center;
+}
+
+.signature {
+    font-size: 0.9rem;
+}
+
+/* Tablet mode */
+@media screen and (min-width:768px) and (max-width: 1280px){
+
+#size-identificator {
+    width: 100px;
+    height: 20px;
+    display: inline-block;
+    background-color: red;
+}
+
+.greeting-entry p {
+    width: 75%;
+}
+
+}
+
+/* Phone mode */
+@media screen and (max-width: 767px){
+
+#size-identificator {
+    width: 100px;
+    height: 20px;
+    display: inline-block;
+    background-color: yellow;
+}
+
+.greeting-entry p {
+    width: 100%;
+}
+
+.greeting-grid {
+    grid-template-rows: 1fr auto auto auto 2fr;
+    grid-template-areas: 
+        "."
+        "greeting"
+        "adopt"
+        "rescue"
+        ".";
+}
+
+.view-home {
+    background-position: 57% 60%;
+}
+
+}
