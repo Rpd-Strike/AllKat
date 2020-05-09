@@ -18,45 +18,67 @@ app.use(express.static("public/"));
 app.use(express.static("public/html/"));
 
 // Create
-app.post("/dogs", (req, res) => {
-  const dogsList = readJSONFile();
-  // Completati cu codul vostru aici
+app.post("/cats", (req, res) => {  
+  const catsList = readJSONFile();
+  /// Perform Data check HERE !!!  WARNING: TO DO
+  cat = req.body;
+  console.log(cat);
+
+  response = {
+    "status" : "Valid or Invalid"
+  };
+
+  res.send(response);
 });
 
 // Read One
-app.get("/dogs/:id", (req, res) => {
-  const dogsList = readJSONFile();
-  // Completati cu codul vostru aici
+app.get("/cats/:id", (req, res) => {
+  const catsList = readJSONFile();
+  if (catsList.hasOwnProperty(req.params.id)) {
+    cat = catsList[req.params.id];
+    cat["id"] = catsList[req.params.id];
+    res.send(cat);
+  }
+  res.status(404).send("Cat id not found");
 });
 
 // Read All
-app.get("/dogs", (req, res) => {
-  const dogsList = readJSONFile();
-  // Completati cu codul vostru aici
+app.get("/cats", (req, res) => {
+  const catsList = readJSONFile();
+  console.log(catsList);
+
+  cats = {};
+  Object.keys(catsList).forEach(id => {
+    cat = catsList[id];
+    cat["id"] = id;
+    cats[id] = cat;
+  });
+  res.send(cats);
 });
 
 // Update
-app.put("/dogs/:id", (req, res) => {
-  const dogsList = readJSONFile();
-  // Completati cu codul vostru aici
+app.put("/cats/:id", (req, res) => {
+  const catsList = readJSONFile();
+  /// TO DO
 });
 
 // Delete
-app.delete("/dogs/:id", (req, res) => {
-  const dogsList = readJSONFile();
-  // Completati cu codul vostru aici
+app.delete("/cats/:id", (req, res) => {
+  const catsList = readJSONFile();
+  const id = req.params.id;
+  /// TO DO
 });
 
 // Functia de citire din fisierul db.json
 function readJSONFile() {
-  return JSON.parse(fs.readFileSync("db.json"))["dogs"];
+  return JSON.parse(fs.readFileSync("db.json"));
 }
 
 // Functia de scriere in fisierul db.json
 function writeJSONFile(content) {
   fs.writeFileSync(
     "db.json",
-    JSON.stringify({ dogs: content }),
+    JSON.stringify({ cats: content }),
     "utf8",
     err => {
       if (err) {

@@ -31,7 +31,7 @@ html {
     min-height: 100vh;
 }
 
-nav {
+.nav {
     padding: 1rem;
     background-color: var(--main-color);
     grid-area: navbar;
@@ -72,7 +72,7 @@ nav {
     cursor: pointer;
 }
 
-main {
+.view-home {
     grid-area: content;
 }
 
@@ -136,18 +136,15 @@ main {
     color: rgb(49, 31, 150);
 }
 
-footer {
-    grid-area: footer;
-    padding: 0.5rem;
-    background-color: var(--button-color);
-}
-
-footer p {
+.footer-p {
     text-align: center;
 }
 
-.signature {
+.footer {
     font-size: 0.9rem;
+    grid-area: footer;
+    padding: 0.5rem;
+    background-color: var(--button-color);
 }
 
 /* Tablet mode */
