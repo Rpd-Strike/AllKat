@@ -1,24 +1,62 @@
 {
     "supermegaid123" : {
         "id" : "supermegaid123",
+        "availability" : "free",
         "name" : "Cat name",
         "race" : "Rare pepe",
         "gender" : "female",
-        "favorite_toy" : "smoc de par",
+        "favorite_toy" : "un ghem",
         "city" : "Rome",
-        "full address" : "Email me for address",
+        "full_address" : "Email me for address",
         "owner email" : "epicmail@mycompany.com",
-        "image" : "http://someurl.com"
+        "image" : "https://picsum.photos/210"
     },
     "secondidd" : {
-        "id" : "supermegaid123",
+        "id" : "secondidd",
+        "availability" : "talk",
+        "name" : "Le chatns rewqwew",
+        "race" : "Gold maxim",
+        "gender" : "male",
+        "favorite_toy" : "hammer",
+        "city" : "Bucuresti",
+        "full_address" : "favele in Rio",
+        "owner email" : "ownermail@mycompany.com",
+        "image" : "https://picsum.photos/210"
+    },
+    "ohffs" : {
+        "id" : "ohffs",
+        "availability" : "free",
+        "name" : "Cat n sssssssssame",
+        "race" : "Rare pepe",
+        "gender" : "female",
+        "favorite_toy" : "un ghem si inca ceva yay",
+        "city" : "Rome",
+        "full_address" : "Email me for address",
+        "owner email" : "epicmail@mycompany.com",
+        "image" : "https://picsum.photos/210"
+    },
+    "yayaioio" : {
+        "id" : "yayaioio",
+        "availability" : "talk",
         "name" : "Le chatnoi",
         "race" : "Gold maxim",
         "gender" : "male",
         "favorite_toy" : "hammer",
         "city" : "Bucuresti",
-        "full address" : "favele in Rio",
+        "full_address" : "favele in Rio",
         "owner email" : "ownermail@mycompany.com",
-        "image" : "http://someurlagain.com"
+        "image" : "https://picsum.photos/210"
+    },
+    "cmonalready" : {
+        "id" : "cmonalready",
+        "availability" : "free",
+        "name" : "Cat name",
+        "race" : "Rare pepe",
+        "gender" : "female",
+        "favorite_toy" : "un ghem",
+        "city" : "Rome",
+        "full_address" : "Email me for address",
+        "owner email" : "epicmail@mycompany.com",
+        "image" : "https://picsum.photos/id/48/210"
     }
 }

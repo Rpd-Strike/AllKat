@@ -6,11 +6,14 @@ function greetConsole()
     renderNav();
     renderHome();
     renderFooter();
+    AddModalHTML();
 }
 
 function showHome()
 {
     appState = "home";
+
+    DeleteModal();
 
     document.getElementsByTagName("main")[0].remove();
     mainEl = document.createElement("main");
@@ -22,6 +25,7 @@ function showHome()
 function showAdopt()
 {
     appState = "adopt";
+    DeleteModal();
     
     document.getElementsByTagName("main")[0].remove();
     mainEl = document.createElement("main");
@@ -40,31 +44,16 @@ function showAdopt()
 function showRescue()
 {
     appState = "rescue";
-    
+    DeleteModal();   
 }
 
 greetConsole();
 
-function myTestFunc()
+function OnClickCat(catId)
 {
-    myCat = {
-        "id" : "someCat id huehue",
-        "content" : "some Content"
-    };
+    console.log("Cat more button presesd: " + catId);
 
-    fetch("http://localhost:3000/cats", {
-        method : "post",
-        headers: {
-            "Content-type": "application/json"
-        },
-        body : JSON.stringify(myCat)
-    }).then(response => {
-        response.json().then(res => {
-            console.log(typeof(res));
-            console.log(res);
-        })
-    }).catch(error => {
-        console.log("Error using fetch: ");
-        console.log(error);
-    });
+    modal = document.getElementsByClassName("cat-modal")[0];
+    modal.classList.remove("closed");
+    modal.classList.add("open");
 }

@@ -1,11 +1,3 @@
-function DeleteAllWithClass(classSelector)
-{
-    var elements = document.getElementsByClassName(classSelector);
-    for (i = 0; i < elements.length; ++i) {
-        elements[i].remove();
-    }
-}
-
 function renderNav()
 {
     console.log("Rendering Navbar");
@@ -73,7 +65,16 @@ function renderCat(fatherNode, cat)
     console.log("Render Cat: ", cat);
 
     html = `
-        <div>${cat.id}</div>
+        <img src="${cat.image}">
+        <button class="btn-cat-info" onclick="OnClickCat('${cat.id}')">
+          <i class="fas fa-info-circle"></i>
+          More
+        </button>
+        <div class="card-availability" class="card-status-${cat.availability}">Availability</div>
+        <p class="card-name"><span>Name:</span> ${cat.name}</p>
+        <p class="card-race"><span>Race:</span> ${cat.race}</p>
+        <p class="card-gender"><span>Gender:</span> ${cat.gender}</p>
+        <p class="card-fav"><span>Fav. toy:</span> ${cat.favorite_toy}</p>
     `;
 
     catEl = document.createElement("div");
@@ -92,6 +93,16 @@ function renderAllCats(allCats)
     Object.keys(allCats).forEach(id => {
         renderCat(catsEl, allCats[id]);
     });
+
     document.getElementsByClassName("view-cat")[0].appendChild(catsEl);
 
+}
+
+function AddModalHTML ()
+{
+    modal = document.createElement("div");
+    modal.classList.add("cat-modal");
+    modal.classList.add("closed");
+
+    document.getElementById("allkat-app").appendChild(modal);
 }
