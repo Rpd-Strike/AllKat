@@ -11,6 +11,11 @@ function greetConsole()
 function showHome()
 {
     appState = "home";
+
+    document.getElementsByTagName("main")[0].remove();
+    mainEl = document.createElement("main");
+    mainEl.classList.add("view-home");
+    
     renderHome();
 }
 
@@ -20,10 +25,10 @@ function showAdopt()
     
     document.getElementsByTagName("main")[0].remove();
     mainEl = document.createElement("main");
-    mainEl.classList.add("cat-view");
+    mainEl.classList.add("view-cat");
 
     document.getElementById("allkat-app").appendChild(mainEl);
-    console.log("new Main cat-view")
+    console.log("new Main view-cat");
 
     Prom_GetAllCats().then(resp => {
         console.log("Show Adopt: Received cats from Server: ");

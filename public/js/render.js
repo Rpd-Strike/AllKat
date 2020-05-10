@@ -92,6 +92,6 @@ function renderAllCats(allCats)
     Object.keys(allCats).forEach(id => {
         renderCat(catsEl, allCats[id]);
     });
-    document.getElementsByClassName("cat-view")[0].appendChild(catsEl);
+    document.getElementsByClassName("view-cat")[0].appendChild(catsEl);
 
 }

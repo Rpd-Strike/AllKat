@@ -73,10 +73,6 @@ html {
 }
 
 .view-home {
-    grid-area: content;
-}
-
-.view-home {
     background: linear-gradient(rgba(255,255,255,.7), rgba(255,255,255,.4)), url("/img/cat-background.jpg");
     /* background-image: url(/img/cat-background.jpg); */
     background-position: center 60%;
@@ -84,6 +80,8 @@ html {
     background-attachment: fixed;
     background-size: cover;
     background-color: #464646;
+    background-position: 57% 60%;
+    grid-area: content;
 }
 
 .greeting-grid {
@@ -185,10 +183,6 @@ html {
         "adopt"
         "rescue"
         ".";
-}
-
-.view-home {
-    background-position: 57% 60%;
 }
 
 }
