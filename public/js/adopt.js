@@ -50,3 +50,8 @@ function renderAllCats(allCats)
 
     document.getElementById("main").appendChild(catsEl);
 }
+
+function OnClickCat(catId)
+{
+    showCat(catId);
+}

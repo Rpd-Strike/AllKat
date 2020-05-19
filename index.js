@@ -37,10 +37,14 @@ app.post("/cats", (req, res) => {
 // Read One
 app.get("/cats/:id", (req, res) => {
   const catsList = readJSONFile();
+  console.log("Requesting cat with ID: " + req.params.id);
+
   if (catsList.hasOwnProperty(req.params.id)) {
     cat = catsList[req.params.id];
-    cat["id"] = catsList[req.params.id];
+    cat["id"] = req.params.id;
+    console.log(cat);
     res.send(cat);
+    return ;
   }
   res.status(404).send("Cat id not found");
 });
@@ -61,15 +65,49 @@ app.get("/cats", (req, res) => {
 
 // Update
 app.put("/cats/:id", (req, res) => {
-  const catsList = readJSONFile();
-  /// TO DO
+  let catsList = readJSONFile();
+  const id = req.params.id;
+  const cat = req.body;
+  if (id != cat.id) {
+    res.status(404).send("Cat id's mismatch between query string and object received in PUT method");
+    return ;
+  }
+  if (!catsList.hasOwnProperty(id)) {
+    res.status(370).send("You are trying to UPDATE an inexistent cat");
+    return ;
+  }
+  if (catsList[id].token != cat.token) {
+    res.status(370).send("Wrong token access for the cat with id: " + id);
+    return ;
+  }
+  
+  catsList[id] = cat;
+  writeJSONFile(catsList);
+  
+  console.log("Successfuly updated cat with id: " + id);
+  
+  res.send({"status" : "valid"});
 });
 
 // Delete
 app.delete("/cats/:id", (req, res) => {
-  const catsList = readJSONFile();
+  let catsList = readJSONFile();
   const id = req.params.id;
-  /// TO DO
+  const cat = req.body;
+  if (id != cat.id) {
+    res.status(404).send("Cat id's mismatch between query string and object received in DELETE method");
+    return ;
+  }
+  if (!catsList.hasOwnProperty(id)) {
+    res.status(360).send("You are trying to DELETE an inexistent cat");
+    return ;
+  }
+  if (catsList[id].token != cat.token) {
+    res.status(360).send("Wrong token access to DELETE the cat with id: " + id);
+    return ;
+  }
+  delete catsList[id];
+  console.log("Deleted cat with id: " + id);
 });
 
 // Functia de citire din fisierul db.json

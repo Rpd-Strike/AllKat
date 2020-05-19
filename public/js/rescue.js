@@ -5,7 +5,7 @@ const RescueHTML = `
 <div class="form-style-5">
     <form>
     <fieldset>
-    <legend><span class="number">O</span> Candidate Info</legend>
+    <legend><span class="number"></span> Tell us about your cat</legend>
     <label>Name</label>
     <input type="text" name="name" placeholder="Cat's name">
     <label>Race</label>
