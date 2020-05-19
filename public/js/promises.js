@@ -12,13 +12,13 @@ async function Prom_GetSingleCat(catId)
 
 async function Prom_GetAllCats()
 {
-    return fetch("cats", {
+    return fetch("cats", { 
         method : "GET",
         headers : {
             "Content-type": "application/json"
         }
     }).then(response => {
-        return response.json();
+        return response.json(); 
     })
 }
 
@@ -29,7 +29,7 @@ async function Prom_DeleteSingleCat(catId)
         headers : {
             "Content-type": "application/json"
         },
-        body : { id : catId }
+        body : JSON.stringify({ id : catId })
     }).then(response => {
         return response.json();
     });
@@ -42,7 +42,7 @@ async function Prom_UpdateSingleCat(cat)
         headers : {
             "Content-type": "application/json"
         },
-        body : cat
+        body : JSON.stringify(cat)
     }).then(response => {
         return response.json();
     });
@@ -50,12 +50,12 @@ async function Prom_UpdateSingleCat(cat)
 
 async function Prom_CreateSingleCat(cat)
 {
-    return fetch("cats/" + catId, {
+    return fetch("cats", {
         method : "POST",
         headers : {
             "Content-type": "application/json"
         },
-        body : cat
+        body : JSON.stringify(cat)
     }).then(response => {
         return response.json();
     });

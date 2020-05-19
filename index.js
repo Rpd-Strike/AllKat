@@ -19,10 +19,13 @@ app.use(express.static("public/html/"));
 
 // Create
 app.post("/cats", (req, res) => {  
-  const catsList = readJSONFile();
+  let catsList = readJSONFile();
   /// Perform Data check HERE !!!  WARNING: TO DO
   cat = req.body;
   console.log(cat);
+
+  catsList[cat.id] = cat;
+  writeJSONFile(catsList);
 
   response = {
     "status" : "Valid or Invalid"
@@ -71,7 +74,8 @@ app.delete("/cats/:id", (req, res) => {
 
 // Functia de citire din fisierul db.json
 function readJSONFile() {
-  return JSON.parse(fs.readFileSync("db.json"));
+  let meh = JSON.parse(fs.readFileSync("db.json"));
+  return meh["cats"];
 }
 
 // Functia de scriere in fisierul db.json
