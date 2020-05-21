@@ -20,7 +20,6 @@ app.use(express.static("public/html/"));
 // Create
 app.post("/cats", (req, res) => {  
   let catsList = readJSONFile();
-  /// Perform Data check HERE !!!  WARNING: TO DO
   cat = req.body;
   console.log(cat);
 
