@@ -7,7 +7,7 @@ const RescueHTML = `
     <fieldset>
     <legend><i class="fas fa-info-circle"></i> Tell us about your cat</legend>
     <label>Name</label>
-    <input type="text" name="name" placeholder="None - Cat's name">
+    <input class="input" type="text" name="name" placeholder="None - Cat's name">
     <label>Race</label>
     <input type="text" class="input" name="race" placeholder="None - Race of your cat">
     <label>Gender</label>

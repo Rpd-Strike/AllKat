@@ -4,12 +4,9 @@ function CreateNav()
     DeleteAllWithClass("nav");
     let navbar = document.createElement("nav");
     navbar.classList.add("nav");
+    
     navbar.innerHTML = `
         <img class="nav-logo" src="img/logo.png" alt="All Kat Updated" onclick="showHome()">
-        <!-- From RENDER
-        <div class="nav-divider"></div>
-        <button class="btn" onclick="showRescue()">Rescue</button> -->
-        <div id="size-identificator" style="display: none;"></div>
         <button class="btn" onclick="showAdopt()">Adopt</button>
         <button class="btn" onclick="showRescue()">Rescue</button>
     `
