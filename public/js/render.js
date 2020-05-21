@@ -31,7 +31,19 @@ function CreateFooter()
     footer.classList.add("footer");
     footer.innerHTML = "\
         <p class=\"footer-p\">Made with ❤️ for &#x1f431;</p>\
-        <p class=\"footer-p\">By Felix the cat !</p>";
+        <p class=\"footer-p\">By Felix the cat !</p>\
+        <p class=\"footer-p\">Last time visited: <span></span></p>";
     document.getElementById("allkat-app").appendChild(footer);
+    let date = "";
+    if (window.localStorage.getItem("date") === null) {
+        date = "This is your first visit!";
+    }
+    else {
+        date = window.localStorage.getItem("date");
+    }
+    document.querySelector(".footer span").innerHTML = date;
+
+    const now = new Date().toLocaleString();
+    window.localStorage.setItem("date", now);
 }
 

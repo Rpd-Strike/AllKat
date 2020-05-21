@@ -6,13 +6,13 @@ CatHTML = `
     <legend><i class="fas fa-info-circle"></i> More information about <span></span></legend>
     <input type="hidden" name="id" value="">
     <label>Name</label>
-    <input type="text" name="name" placeholder="None - Cat's name">
+    <input type="text" class="input" name="name" placeholder="None - Cat's name">
     <label>Race</label>
-    <input type="text" name="race" placeholder="None - Race of your cat">
+    <input type="text" class="input" name="race" placeholder="None - Race of your cat">
     <label>Gender</label>
-    <input type="text" name="gender" placeholder="None - Gender">
+    <input type="text" class="input" name="gender" placeholder="None - Gender">
     <label>City</label>
-    <input type="text" name="city" placeholder="None - City">
+    <input type="text" class="input" name="city" placeholder="None - City">
     <label for="availability">Availability:</label>
 <select name="availability">
   <option value="free">Available</option>
@@ -22,16 +22,16 @@ CatHTML = `
     <label>About your cat</label>
     <textarea name="favorite_toy" placeholder="None - Favorite toy..."></textarea>
     <label>Address</label>
-    <input type="text" name="full_address" placeholder="None - Where is your cat?">
+    <input type="text" class="input" name="full_address" placeholder="None - Where is your cat?">
     <label>Email</label>
-    <input type="email" name="email" placeholder="None - Email">
+    <input type="email" class="input" name="email" placeholder="None - Email">
     <label>Image link</label>
-    <input type="text" name="image" placeholder="None - URL of your cat's photo">
+    <input type="text" class="input" name="image" placeholder="None - URL of your cat's photo">
     <label>Access token</label>
-    <input type="text" name="token" placeholder="None - Access token here">      
+    <input type="text" class="input" name="token" placeholder="None - Access token here">      
     </fieldset>
-    <input type="button" value="Update information" onclick="UpdateCatClick()" />
-    <input type="button" value="Delete" onclick="DeleteCatClick()" />
+    <input class="input" type="button" value="Update information" onclick="UpdateCatClick()" />
+    <input class="input" type="button" value="Delete" onclick="DeleteCatClick()" />
 
     <div class="extra-info">
       <h4><span><span></h4>
