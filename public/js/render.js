@@ -5,12 +5,36 @@ function CreateNav()
     let navbar = document.createElement("nav");
     navbar.classList.add("nav");
     
-    navbar.innerHTML = `
-        <img class="nav-logo" src="img/logo.png" alt="All Kat Updated" onclick="showHome()">
-        <button class="btn" onclick="showAdopt()">Adopt</button>
-        <button class="btn" onclick="showRescue()">Rescue</button>
-    `
+    let img = document.createElement('img');
+    img.setAttribute('class', 'nav-logo');
+    img.setAttribute('src', 'img/logo.png');
+    img.setAttribute('alt', 'All Kat Updated');
+    img.setAttribute('onclick', 'showHome()');
+
+    navbar.appendChild(img);
+
+    let adopt = document.createElement('button');
+    adopt.setAttribute('class', 'btn');
+    adopt.setAttribute('onclick', 'showAdopt()');
+    adopt.textContent = 'Adopt';
+
+    navbar.appendChild(adopt);
+
+    let rescue = document.createElement('button');
+    rescue.setAttribute('class', 'btn');
+    rescue.setAttribute('onclick', 'showRescue()');
+    rescue.textContent = 'Rescue';
+
+    navbar.appendChild(rescue);
+
     document.getElementById("allkat-app").appendChild(navbar);
+
+    // // navbar.innerHTML = `
+    // //     <img class="nav-logo" src="img/logo.png" alt="All Kat Updated" onclick="showHome()">
+    // //     <button class="btn" onclick="showAdopt()">Adopt</button>
+    // //     <button class="btn" onclick="showRescue()">Rescue</button>
+    // // `
+    
 }
 
 function CreateHome()

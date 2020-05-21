@@ -84,12 +84,12 @@ function DeleteCatClick()
         console.log(res);
         if (res.status == "valid") {
             showAdopt();
+        } else {
+            if (res.status != "valid") {
+                document.querySelector('h4>span').innerHTML = "Wrong access token or bad request";
+            }
+            CAT_ShowExtraInfo();
         }
-
-        if (res.status != "valid") {
-            document.querySelector('h4>span').innerHTML = "Wrong access token or bad request";
-        }
-        CAT_ShowExtraInfo();
     });
 }
 
