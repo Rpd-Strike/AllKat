@@ -14,7 +14,7 @@ function clearMainClasses()
     document.getElementById('main').className = '';
 }
 
-function token(length) {
+function generate_token(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;

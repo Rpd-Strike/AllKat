@@ -52,7 +52,7 @@ app.get("/cats/:id", (req, res) => {
 // Read All
 app.get("/cats", (req, res) => {
   const catsList = readJSONFile();
-  console.log(catsList);
+  console.log("Get ALL cats");
 
   cats = {};
   Object.keys(catsList).forEach(id => {
@@ -77,7 +77,7 @@ app.put("/cats/:id", (req, res) => {
     return ;
   }
   if (catsList[id].token != cat.token) {
-    res.status(370).send("Wrong token access for the cat with id: " + id);
+    res.send({"status" : "invalid", "reason" : "wrong access token"});
     return ;
   }
   
@@ -103,11 +103,13 @@ app.delete("/cats/:id", (req, res) => {
     return ;
   }
   if (catsList[id].token != cat.token) {
-    res.status(360).send("Wrong token access to DELETE the cat with id: " + id);
+    res.send({"status" : "invalid", "reason" : "wrong access token"});
     return ;
   }
   delete catsList[id];
   console.log("Deleted cat with id: " + id);
+  writeJSONFile(catsList);
+  res.send({"status" : "valid"});
 });
 
 // Functia de citire din fisierul db.json

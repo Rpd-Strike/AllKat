@@ -9,7 +9,9 @@ function CreateNav()
         <!-- From RENDER
         <div class="nav-divider"></div>
         <button class="btn" onclick="showRescue()">Rescue</button> -->
-        <div id="size-identificator"></div>
+        <div id="size-identificator" style="display: none;"></div>
+        <button class="btn" onclick="showAdopt()">Adopt</button>
+        <button class="btn" onclick="showRescue()">Rescue</button>
     `
     document.getElementById("allkat-app").appendChild(navbar);
 }

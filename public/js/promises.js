@@ -22,14 +22,14 @@ async function Prom_GetAllCats()
     })
 }
 
-async function Prom_DeleteSingleCat(catId)
+async function Prom_DeleteSingleCat(catId, token)
 {
     return fetch("cats/" + catId, {
         method : "DELETE",
         headers : {
             "Content-type": "application/json"
         },
-        body : JSON.stringify({ id : catId })
+        body : JSON.stringify({ id : catId, token : token })
     }).then(response => {
         return response.json();
     });
@@ -50,6 +50,10 @@ async function Prom_UpdateSingleCat(cat)
 
 async function Prom_CreateSingleCat(cat)
 {
+    console.log("Trying to create cat: ");
+    console.log(cat);
+
+    
     return fetch("cats", {
         method : "POST",
         headers : {

@@ -10,12 +10,32 @@ function showAdopt()
         console.log("Show Adopt: Received cats from Server: ");
         console.log(resp);
         renderAllCats(resp);
+
+        if (Object.keys(resp).length < 1) {
+            renderEmptyMsg();
+        }
     });
+}
+
+function renderEmptyMsg()
+{
+    DeleteAllWithClass("cats-flexbox");
+    catsEl = document.createElement("div");
+    catsEl.classList.add("cats-flexbox");
+
+    element = document.createElement("div");
+    paragraf = document.createElement("h4");
+    paragraf.innerText = "Ooops! Looks like there are no cats!";
+
+    element.appendChild(paragraf);
+    catsEl.appendChild(element);
+
+    document.getElementById("main").appendChild(catsEl);
 }
 
 function renderCat(fatherNode, cat)
 {
-    console.log("Render Cat: ", cat);
+    // console.log("Render Cat: ", cat);
 
     html = `
         <img src="${cat.image}">
@@ -23,7 +43,10 @@ function renderCat(fatherNode, cat)
           <i class="fas fa-info-circle"></i>
           More
         </button>
-        <div class="card-availability" class="card-status-${cat.availability}">Availability</div>
+        <div class="card-availability card-status-${cat.availability}">
+          <div></div>
+          <span>Availability</span>
+        </div>
         <p class="card-name"><span>Name:</span> ${cat.name}</p>
         <p class="card-race"><span>Race:</span> ${cat.race}</p>
         <p class="card-gender"><span>Gender:</span> ${cat.gender}</p>
