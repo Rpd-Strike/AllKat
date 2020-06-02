@@ -18,7 +18,7 @@ function CreateNav()
     adopt.setAttribute('onclick', 'showAdopt()');
     adopt.textContent = 'Adopt';
 
-    navbar.appendChild(adopt);
+    navbar.appendChild(adopt); 
 
     let rescue = document.createElement('button');
     rescue.setAttribute('class', 'btn');

@@ -17,14 +17,18 @@ app.use(cors());
 app.use(express.static("public/"));
 app.use(express.static("public/html/"));
 
+// Own modules
+const database = require("./database");
+const InitScript = require('./init_script');
+
 // Create
 app.post("/cats", (req, res) => {  
-  let catsList = readJSONFile();
+  let catsList = database.readCats();
   cat = req.body;
   console.log(cat);
 
   catsList[cat.id] = cat;
-  writeJSONFile(catsList);
+  database.writeCats(catsList);
 
   response = {
     "status" : "Valid or Invalid"
@@ -35,7 +39,7 @@ app.post("/cats", (req, res) => {
 
 // Read One
 app.get("/cats/:id", (req, res) => {
-  const catsList = readJSONFile();
+  const catsList = database.readCats();
   console.log("Requesting cat with ID: " + req.params.id);
 
   if (catsList.hasOwnProperty(req.params.id)) {
@@ -50,7 +54,7 @@ app.get("/cats/:id", (req, res) => {
 
 // Read All
 app.get("/cats", (req, res) => {
-  const catsList = readJSONFile();
+  const catsList = database.readCats();
   console.log("Get ALL cats");
 
   cats = {};
@@ -64,7 +68,7 @@ app.get("/cats", (req, res) => {
 
 // Update
 app.put("/cats/:id", (req, res) => {
-  let catsList = readJSONFile();
+  let catsList = database.readCats();
   const id = req.params.id;
   const cat = req.body;
   if (id != cat.id) {
@@ -81,7 +85,7 @@ app.put("/cats/:id", (req, res) => {
   }
   
   catsList[id] = cat;
-  writeJSONFile(catsList);
+  database.writeCats(catsList);
   
   console.log("Successfuly updated cat with id: " + id);
   
@@ -90,7 +94,7 @@ app.put("/cats/:id", (req, res) => {
 
 // Delete
 app.delete("/cats/:id", (req, res) => {
-  let catsList = readJSONFile();
+  let catsList = database.readCats();
   const id = req.params.id;
   const cat = req.body;
   if (id != cat.id) {
@@ -107,29 +111,12 @@ app.delete("/cats/:id", (req, res) => {
   }
   delete catsList[id];
   console.log("Deleted cat with id: " + id);
-  writeJSONFile(catsList);
+  database.writeCats(catsList);
   res.send({"status" : "valid"});
 });
 
-// Functia de citire din fisierul db.json
-function readJSONFile() {
-  let meh = JSON.parse(fs.readFileSync("db.json"));
-  return meh["cats"];
-}
-
-// Functia de scriere in fisierul db.json
-function writeJSONFile(content) {
-  fs.writeFileSync(
-    "db.json",
-    JSON.stringify({ cats: content }),
-    "utf8",
-    err => {
-      if (err) {
-        console.log(err);
-      }
-    }
-  );
-}
+// creeam database
+InitScript.touchDatabase();
 
 // Pornim server-ul
 app.listen("3000", () =>
