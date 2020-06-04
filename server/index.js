@@ -119,6 +119,41 @@ app.put("/api/user/login", (req, res) => {
   res.send(validRequest({info: "Logged in and generated token is: " + newToken}));
 });
 
+
+/// Logout endpoint
+app.delete("/api/user/logout", (req, res) => {
+  data = addIpToData(req.body, req);
+  if (!hasFields(data, ["username", "token"])) {
+    res.send(badRequest("Required fields empty"));
+  }
+
+  data.username = String(data.username);
+  data.token = String(data.token);
+  if (!validUserAndToken(data.username, data.token)) {
+    res.send(badRequest("Username and Token mismatch or invalid"));
+  }
+
+  let tokenList = database.readTokens();
+  delete tokenList[data.token];
+  database.writeTokens(tokenList);
+
+  /// Log info and send back request
+  LogSuccessfulLogout(data);
+  res.send(validRequest({info: "Logged out successfully",
+                         username: data.username,
+                         token: data.token}));
+})
+
+/// Get Online users  || WORK IN PROGERSS
+app.get("/api/user/all_online", (req, res) => {
+  data = addIpToData(req.body, req);
+  
+  const userList = database.readUsers();
+  userList.forEach(username => {
+    
+  });
+})
+
 // Create
 app.post("/cats", (req, res) => {  
   let catsList = database.readCats();
