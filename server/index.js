@@ -9,6 +9,7 @@ const fs = require("fs");
 
 // Aplicatia
 const app = express();
+const TOKEN_LENGTH = 15;
 
 // Middleware
 app.use(morgan("tiny"));
@@ -20,6 +21,103 @@ app.use(express.static("public/html/"));
 // Own modules
 const database = require("./database");
 const InitScript = require('./init_script');
+
+function addIpToData(data, req)
+{
+  let newData = data;
+  newData.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  return newData;
+}
+
+// User API =============
+// Create User
+app.post("/api/user/create", (req, res) => {
+  /// add IP to the request data and check if required fields are sent
+  data = addIpToData(req.body, req);
+  if (!hasFields(data, ["username", "password"])) {
+    res.send(badRequest("Required fields empty"));
+  }
+
+  /// check if fields correspond to valid request
+  data.password = String(password);
+  data.username = String(username);
+  let takenUsername = false, validPassword = (data.password.length > 0 ? true : false);
+  /// === Check if username already taken
+  let userList = database.readUsers();
+  userList.forEach(username => {
+    if (data.username.toLowerCase() == username.toLowerCase())
+      takenUsername = true;
+  });
+  if (!validPassword || data.username.length == 0)
+    res.send(badRequest("Password or Username field invalid"));
+  else if (takenUsername)
+    res.send(badRequest("Username taken"));
+  
+  /// Save the new user to the database
+  userObj = {
+    password: data.password,
+    username: data.username
+  }
+  userList[userObj.username] = userObj;
+  database.writeUsers(userList);
+
+  /// Log information and send back to the client data
+  LogNewUser(data);
+  res.send(validRequest({info: "New user created with username: " + userObj.username}));
+})
+
+/// Login and on success generate token and send it back
+app.put("/api/user/login", (req, res) => {
+  data = addIpToData(req.body, req);
+  if (!hasFields(data, ["username", "password"])) {
+    res.send(badRequest("Required fields empty"));
+  }
+
+  function generate_token(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    console.log("Token called with " + length + " - " + result);
+    return result;
+  }
+
+  /// Check if fields correspond to valid request
+  data.password = String(password);
+  data.username = String(username);
+  let existingUsername = false, goodPassword = false;
+  const userList = database.readUsers();
+  userList.forEach(username => {
+    if (data.username.toLowerCase() == username.toLowerCase()) {
+      existingUsername = true;
+      goodPassword = (userList[username].password == data.password);
+    }
+  })
+  if (!existingUsername)
+    res.send(badRequest("Username doesn't exist"));
+  if (!goodPassword)
+    res.send(badRequest("Password is wrong"));
+
+  /// Generate new token and save it
+  let tokenList = database.readTokens();
+  let newToken = generate_token(TOKEN_LENGTH);
+  while (tokenExists(tokenList, newToken)) {
+    newToken = generate_token(TOKEN_LENGTH);
+  }
+
+  let newObject = {
+    username: data.username,
+    token: newToken
+  }
+  tokenList[newToken] = newObject;
+  database.writeTokens(tokenList);
+
+  /// Log info and send back request
+  LogSuccessfullLogin(newObject);
+  res.send(validRequest({info: "Logged in and generated token is: " + newToken}));
+});
 
 // Create
 app.post("/cats", (req, res) => {  

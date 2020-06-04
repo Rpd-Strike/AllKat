@@ -23,4 +23,4 @@ function generate_token(length) {
     }
     console.log("Token called with " + length + " - " + result);
     return result;
- }
+}
