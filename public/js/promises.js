@@ -1,3 +1,16 @@
+function generatePayload()
+{
+
+}
+
+/// this function takes a fetch promise and wraps it to handle basic failures of it
+function wrapperPromise(promise_request)
+{
+    return promise_request.then(response => {
+        return response.json();
+    })
+}
+
 async function Prom_GetSingleCat(catId)
 {
     return fetch("cats/" + catId, {
@@ -63,4 +76,20 @@ async function Prom_CreateSingleCat(cat)
     }).then(response => {
         return response.json();
     });
+}
+
+async function Prom_TestToken(token)
+{
+    console.log("Testing token: " + token);
+
+    let payload = generatePayload();
+    payload.token = token;
+
+    return fetch('user/test_token', {
+        method : "GET",
+        headers : {
+            "Content-type": "application/json"
+        },
+        body : JSON.stringify()
+    })
 }
