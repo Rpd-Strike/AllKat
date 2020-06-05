@@ -4,7 +4,7 @@ module.exports = {
         console.log(`UserAPI | New User Created at time --- username: --- fom IP: ---`);
     },
 
-    successfullLogin: function(data)
+    successfullLogin: function(data, ip)
     {
         console.log(`UserAPI | User: --- logged in from IP: --- at Time: ---`);
     },
