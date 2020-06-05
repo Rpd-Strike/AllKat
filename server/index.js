@@ -45,14 +45,12 @@ function validRequest(data)
 
 function hasFields(thePObj, listFields)
 {
-  console.log(listFields.length);
   let valid = true;
   listFields.forEach(field => {
     if (!thePObj.hasOwnProperty(field)) {
       valid = false;
     }
   });
-  console.log(valid);
   return valid;
 }
 
@@ -71,7 +69,6 @@ app.post("/api/user/create", (req, res) => {
   let takenUsername = false, validPassword = (data.password.length > 0 ? true : false);
   /// === Check if username already taken
   let userList = database.readUsers();
-  console.log(Object.keys(userList).length);
   Object.keys(userList).forEach(username => {
     if (data.username.toLowerCase() == username.toLowerCase())
       takenUsername = true;
@@ -112,7 +109,7 @@ app.put("/api/user/login", (req, res) => {
     for ( var i = 0; i < length; i++ ) {
        result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
-    console.log("Token called with " + length + " - " + result);
+    // console.log("Token called with " + length + " - " + result);
     return result;
   }
 
