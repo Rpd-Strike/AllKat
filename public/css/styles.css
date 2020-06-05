@@ -40,6 +40,10 @@ html {
     grid-area: navbar;
 }
 
+.nav-user {
+    float: right;
+}
+
 /* Style buttons */
 .btn {
     background-color: transparent; /* Blue background */
