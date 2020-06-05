@@ -32,7 +32,8 @@ module.exports = {
                 // console.log("read this as test: ");
                 // console.log(content);
             }
-            catch {
+            catch(err_useless) {
+                // console.log(err_useless);
                 console.log("SETUP ERROR: Corrupt db file, when running: " + func.read.name);
                 /// make backup of db
                 filenames.forEach(file => {

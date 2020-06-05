@@ -9,6 +9,7 @@ const fs = require("fs");
 
 // Aplicatia
 const app = express();
+const PORT = 3000;
 
 // Middleware
 app.use(morgan("tiny"));
@@ -119,6 +120,6 @@ app.delete("/cats/:id", (req, res) => {
 InitScript.touchDatabase();
 
 // Pornim server-ul
-app.listen("3000", () =>
-  console.log("Server started at: http://localhost:3000")
+app.listen(PORT, () =>
+  console.log("Server started at: http://localhost:" + PORT)
 );
