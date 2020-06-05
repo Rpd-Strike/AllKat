@@ -27,14 +27,7 @@ function CreateNav()
 
     navbar.appendChild(rescue);
 
-    document.getElementById("allkat-app").appendChild(navbar);
-
-    // // navbar.innerHTML = `
-    // //     <img class="nav-logo" src="img/logo.png" alt="All Kat Updated" onclick="showHome()">
-    // //     <button class="btn" onclick="showAdopt()">Adopt</button>
-    // //     <button class="btn" onclick="showRescue()">Rescue</button>
-    // // `
-    
+    document.getElementById("allkat-app").appendChild(navbar);   
 }
 
 function CreateHome()

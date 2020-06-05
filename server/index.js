@@ -21,7 +21,7 @@ app.use(express.static("public/html/"));
 const database = require("./database");
 const InitScript = require('./init_script');
 
-// Create
+// Create 
 app.post("/cats", (req, res) => {  
   let catsList = database.readCats();
   cat = req.body;

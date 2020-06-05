@@ -23,4 +23,11 @@ function generate_token(length) {
     }
     console.log("Token called with " + length + " - " + result);
     return result;
- }
+}
+
+function badResponse(message) {
+    return {
+        status: "BAD",
+        reason: message
+    }
+}

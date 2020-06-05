@@ -37,6 +37,8 @@ function renderCat(fatherNode, cat)
 {
     // console.log("Render Cat: ", cat);
 
+    /// interpretare a template engine in browser. IMPORTANT
+
     html = `
         <img src="${cat.image}">
         <button class="btn-cat-info" onclick="OnClickCat('${cat.id}')">
