@@ -21,12 +21,25 @@ app.use(express.static("public/html/"));
 // Own modules
 const database = require("./database");
 const InitScript = require('./init_script');
+const LogCRUD = require("./LogCRUD");
 
 function addIpToData(data, req)
 {
   let newData = data;
   newData.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   return newData;
+}
+
+function badRequest(err_description)
+{
+  return {status: "BAD",
+          reason: err_description};
+}
+
+function validRequest(data)
+{
+  return {status: "OK",
+          data: data}
 }
 
 // User API =============
@@ -48,6 +61,10 @@ app.post("/api/user/create", (req, res) => {
     if (data.username.toLowerCase() == username.toLowerCase())
       takenUsername = true;
   });
+  if (data.username.toLowerCase() == "admin") 
+    res.send(badRequest("Trying to create admin account"));
+  if (data.username.toLowerCase() == "guest") 
+    res.send(badRequest("Trying to create guest account"));
   if (!validPassword || data.username.length == 0)
     res.send(badRequest("Password or Username field invalid"));
   else if (takenUsername)
@@ -62,7 +79,7 @@ app.post("/api/user/create", (req, res) => {
   database.writeUsers(userList);
 
   /// Log information and send back to the client data
-  LogNewUser(data);
+  LogCRUD.newUser(data);
   res.send(validRequest({info: "New user created with username: " + userObj.username}));
 })
 
@@ -109,13 +126,14 @@ app.put("/api/user/login", (req, res) => {
 
   let newObject = {
     username: data.username,
-    token: newToken
+    token: newToken,
+    time_logged: JSON.stringify(new Date())
   }
   tokenList[newToken] = newObject;
   database.writeTokens(tokenList);
 
   /// Log info and send back request
-  LogSuccessfullLogin(newObject);
+  LogCRUD.successfullLogin(newObject);
   res.send(validRequest({info: "Logged in and generated token is: " + newToken}));
 });
 
@@ -138,21 +156,45 @@ app.delete("/api/user/logout", (req, res) => {
   database.writeTokens(tokenList);
 
   /// Log info and send back request
-  LogSuccessfulLogout(data);
+  LogCRUD.successfulLogout(data);
   res.send(validRequest({info: "Logged out successfully",
                          username: data.username,
                          token: data.token}));
-})
+});
 
 /// Get Online users  || WORK IN PROGERSS
 app.get("/api/user/all_online", (req, res) => {
   data = addIpToData(req.body, req);
   
+  function addSecondsSinceLogin(username, uList) {
+    let seconds = ((new Date()) - (new Date(JSON.parse(uList[username].time_logged)))) / 1000;
+    return {time_logged: uList[username].time_logged,
+            username: username,
+            since_login: seconds};
+  }
+
   const userList = database.readUsers();
+  let onlineList = [];
   userList.forEach(username => {
-    
+    const data = addSecondsSinceLogin(username, userList);
+    if (data.since_login > MINUTES_ONLINE * 60) {
+      onlineList.push(data);
+    }
   });
-})
+  LogCRUD.getOnlineUsers(data, onlineList.length);
+  res.send(validRequest(onlineList));
+});
+
+/// testToken
+app.get("/api/user/test_token", (req, res) => {
+  data = addIpToData(req.body, req);
+
+  const tokenList = database.readTokens();
+  LogCRUD.testToken(data.token);
+  if (tokenList.hasOwnProperty(data.token)) {
+    return validRequest(database.readUsers()[tokenList[data.token].username]);
+  }
+});
 
 // Create
 app.post("/cats", (req, res) => {  
