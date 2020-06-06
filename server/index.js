@@ -50,7 +50,7 @@ function hasFields(thePObj, listFields)
     }
   });
   return valid;
-}
+} 
 
 // User API =============
 // Create User
@@ -83,7 +83,8 @@ app.post("/api/user/create", (req, res) => {
   /// Save the new user to the database
   userObj = {
     password: data.password,
-    username: data.username
+    username: data.username,
+    time_logged: JSON.stringify(new Date(1980, 1, 1))
   }
   userList[userObj.username] = userObj;
   database.writeUsers(userList);
