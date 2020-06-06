@@ -5,7 +5,6 @@
 }
 
 
-
 html {
     font-size: 20px;
 }
@@ -38,6 +37,10 @@ html {
     /* padding: 1rem; */
     background-color: var(--main-color);
     grid-area: navbar;
+}
+
+.nav-user {
+    float: right;
 }
 
 /* Style buttons */

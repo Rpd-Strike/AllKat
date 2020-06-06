@@ -1,66 +1,96 @@
-async function Prom_GetSingleCat(catId)
+
+/// this function takes a fetch promise and wraps it to handle basic failures of it
+function wrapperPromise(fetch_getter)
 {
-    return fetch("cats/" + catId, {
-        method : "GET",
-        headers : {
-            "Content-type": "application/json"
-        },
-    }).then(response => {
-        return response.json();
-    });
+    return fetch_getter()
+        .catch(err => Promise.reject(badResponse("Network or server error")))
+        .then(response => response.json())
+        .catch(err => {
+            /// verific daca eroarea nu este "de la mine"
+            if (typeof err.reason != 'undefined') {
+                err = badResponse("JSON parse error");
+            }
+            console.log("Promise error reason: " + err.reason);
+            return Promise.reject(err);
+        })
+        // .then(resp => {
+        //     console.log("Promise fullfilled: ");
+        //     console.log(resp);
+        //     return Promise.resolve(resp);
+        // })
 }
 
-async function Prom_GetAllCats()
+async function Prom_GetSingleCat(catId)
 {
-    return fetch("cats", { 
+    const promise_getter = () => fetch("cats/" + catId, {
         method : "GET",
         headers : {
             "Content-type": "application/json"
         }
-    }).then(response => {
-        return response.json(); 
-    })
+    });
+    return wrapperPromise(promise_getter);
+}
+
+async function Prom_GetAllCats()
+{
+    const promise_getter = () => fetch("cats", { 
+        method : "GET",
+        headers : {
+            "Content-type": "application/json"
+        }
+    });
+    return wrapperPromise(promise_getter);
 }
 
 async function Prom_DeleteSingleCat(catId, token)
 {
-    return fetch("cats/" + catId, {
+    const promise_getter = () => fetch("cats/" + catId, {
         method : "DELETE",
         headers : {
             "Content-type": "application/json"
         },
         body : JSON.stringify({ id : catId, token : token })
-    }).then(response => {
-        return response.json();
     });
+    return wrapperPromise(promise_getter);
 }
 
 async function Prom_UpdateSingleCat(cat)
 {
-    return fetch("cats/" + cat.id, {
+    const promise_getter = () => fetch("cats/" + cat.id, {
         method : "PUT",
         headers : {
             "Content-type": "application/json"
         },
         body : JSON.stringify(cat)
-    }).then(response => {
-        return response.json();
     });
+    return wrapperPromise(promise_getter);
 }
 
 async function Prom_CreateSingleCat(cat)
 {
     console.log("Trying to create cat: ");
     console.log(cat);
-
     
-    return fetch("cats", {
+    const promise_getter = () => fetch("cats", {
         method : "POST",
         headers : {
             "Content-type": "application/json"
         },
         body : JSON.stringify(cat)
-    }).then(response => {
-        return response.json();
     });
+    return wrapperPromise(promise_getter);
+}
+
+async function Prom_TestToken(token)
+{
+    console.log("Testing token: " + token);
+
+    const promise_getter = () => fetch('user/test_token', {
+        method : "GET",
+        headers : {
+            "Content-type": "application/json"
+        },
+        body : JSON.stringify({token: token})
+    });
+    return wrapperPromise(promise_getter);
 }

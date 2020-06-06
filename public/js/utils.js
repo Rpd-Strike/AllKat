@@ -6,7 +6,7 @@ function DeleteAllWithClass(classSelector)
     var elements = document.getElementsByClassName(classSelector);
     for (i = 0; i < elements.length; ++i) {
         elements[i].remove();
-    }
+    } 
 }
 
 function clearMainClasses()
@@ -23,4 +23,11 @@ function generate_token(length) {
     }
     console.log("Token called with " + length + " - " + result);
     return result;
+}
+
+function badResponse(message) {
+    return {
+        status: "BAD",
+        reason: message
+    }
 }

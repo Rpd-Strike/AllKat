@@ -8,6 +8,7 @@ const cors = require("cors");
 const app = express();
 const TOKEN_LENGTH = 15;
 const MINUTES_ONLINE = 5;
+const PORT = "3000";
 
 // Middleware
 app.use(morgan("tiny"));
@@ -229,7 +230,7 @@ app.get("/api/user/test_token/:token", (req, res) => {
   return res.send(badRequest("Invalid token"));
 });
 
-// Create
+// Create 
 app.post("/cats", (req, res) => {  
   let catsList = database.readCats();
   cat = req.body;
@@ -324,6 +325,6 @@ app.delete("/cats/:id", (req, res) => {
 InitScript.touchDatabase();
 
 // Pornim server-ul
-app.listen("3000", () =>
-  console.log("Server started at: http://localhost:3000")
+app.listen(PORT, () =>
+  console.log("Server started at: http://localhost:" + PORT)
 );
