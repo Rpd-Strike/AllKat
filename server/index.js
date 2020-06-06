@@ -3,11 +3,12 @@ const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const fs = require("fs");
 
 // Aplicatia
 const app = express();
-const PORT = 3000;
+const TOKEN_LENGTH = 15;
+const MINUTES_ONLINE = 5;
+const PORT = "3000";
 
 // Middleware
 app.use(morgan("tiny"));
@@ -19,6 +20,215 @@ app.use(express.static("public/html/"));
 // Own modules
 const database = require("./database");
 const InitScript = require('./init_script');
+const LogCRUD = require("./LogCRUD");
+
+function addIpToData(data, req)
+{
+  let newData = data;
+  newData.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  return newData;
+}
+
+function badRequest(err_description)
+{
+  return {status: "BAD",
+          reason: err_description};
+}
+
+function validRequest(data)
+{
+  return {status: "OK",
+          data: data}
+}
+
+function hasFields(thePObj, listFields)
+{
+  let valid = true;
+  listFields.forEach(field => {
+    if (!thePObj.hasOwnProperty(field)) {
+      valid = false;
+    }
+  });
+  return valid;
+}
+
+// User API =============
+// Create User
+app.post("/api/user/create", (req, res) => {
+  /// add IP to the request data and check if required fields are sent
+  data = addIpToData(req.body, req);
+  if (!hasFields(data, ["username", "password"])) {
+    return res.send(badRequest("Required fields empty"));
+  }
+
+  /// check if fields correspond to valid request
+  data.password = String(data.password);
+  data.username = String(data.username);
+  let takenUsername = false, validPassword = (data.password.length > 0 ? true : false);
+  /// === Check if username already taken
+  let userList = database.readUsers();
+  Object.keys(userList).forEach(username => {
+    if (data.username.toLowerCase() == username.toLowerCase())
+      takenUsername = true;
+  });
+  if (data.username.toLowerCase() == "admin") 
+    return res.send(badRequest("Trying to create admin account"));
+  if (data.username.toLowerCase() == "guest") 
+    return res.send(badRequest("Trying to create guest account"));
+  if (!validPassword || data.username.length == 0)
+    return res.send(badRequest("Password or Username field invalid"));
+  else if (takenUsername)
+    return res.send(badRequest("Username taken"));
+  
+  /// Save the new user to the database
+  userObj = {
+    password: data.password,
+    username: data.username
+  }
+  userList[userObj.username] = userObj;
+  database.writeUsers(userList);
+
+  /// Log information and send back to the client data
+  LogCRUD.newUser(data);
+  return res.send(validRequest({info: "New user created with username: " + userObj.username}));
+})
+
+/// Login and on success generate token and send it back
+app.put("/api/user/login", (req, res) => {
+  data = addIpToData(req.body, req);
+  if (!hasFields(data, ["username", "password"])) {
+    return res.send(badRequest("Required fields empty"));
+  }
+
+  function generate_token(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    // console.log("Token called with " + length + " - " + result);
+    return result;
+  }
+
+  function tokenExists(tokList, checkToken) {
+    return tokList.hasOwnProperty(checkToken);
+  }
+
+  /// Check if fields correspond to valid request
+  data.password = String(data.password);
+  data.username = String(data.username);
+  let existingUsername = false, goodPassword = false;
+  let userList = database.readUsers();
+  Object.keys(userList).forEach(username => {
+    if (data.username.toLowerCase() == username.toLowerCase()) {
+      existingUsername = true;
+      goodPassword = (userList[username].password == data.password);
+    }
+  })
+  if (!existingUsername)
+    return res.send(badRequest("Username doesn't exist"));
+  if (!goodPassword)
+    return res.send(badRequest("Password is wrong"));
+
+  /// Generate new token and save it
+  let tokenList = database.readTokens();
+  let newToken = generate_token(TOKEN_LENGTH);
+  while (tokenExists(tokenList, newToken)) {
+    newToken = generate_token(TOKEN_LENGTH);
+  }
+
+  let newObjectToken = {
+    username: data.username,
+    token: newToken,
+  }
+  tokenList[newToken] = newObjectToken;
+  database.writeTokens(tokenList);
+
+  let newObjectUser = userList[data.username];
+  newObjectUser.time_logged = JSON.stringify(new Date());
+  userList[data.username] = newObjectUser;
+  database.writeUsers(userList);
+
+  /// Log info and send back request
+  LogCRUD.successfullLogin(newObjectUser, data.ip);
+  return res.send(validRequest({info: "Logged in and generated token is: " + newToken,
+                                token: newToken}));
+});
+
+
+/// Logout endpoint
+app.delete("/api/user/logout", (req, res) => {
+  data = addIpToData(req.body, req);
+  if (!hasFields(data, ["username", "token"])) {
+    return res.send(badRequest("Required fields empty"));
+  }
+
+  function validUserAndToken(user, token) {
+    const tokList = database.readTokens();
+    if (!tokList.hasOwnProperty(token))
+      return false;
+    const givenUser = tokList[token].username;
+    if (user != givenUser)
+      return false;
+    return true;
+  }
+
+  data.username = String(data.username);
+  data.token = String(data.token);
+  if (!validUserAndToken(data.username, data.token)) {
+    return res.send(badRequest("Username and Token mismatch or invalid"));
+  }
+
+  let tokenList = database.readTokens();
+  delete tokenList[data.token];
+  database.writeTokens(tokenList);
+
+  /// Log info and send back request
+  LogCRUD.successfulLogout(data);
+  return res.send(validRequest({info: "Logged out successfully",
+                         username: data.username,
+                         token: data.token}));
+});
+
+/// Get online users
+app.get("/api/user/all_online", (req, res) => {
+  data = addIpToData(req.body, req);
+  
+  function addSecondsSinceLogin(username, uList) {
+    let seconds = ((new Date()) - (new Date(JSON.parse(uList[username].time_logged)))) / 1000;
+    console.log("seeing that user: " + username + " is logged in for " + seconds + " seconds");
+    return {time_logged: uList[username].time_logged,
+            username: username,
+            since_login: seconds};
+  }
+
+  const userList = database.readUsers();
+  let onlineList = [];
+  Object.keys(userList).forEach(username => {
+    const data = addSecondsSinceLogin(username, userList);
+    if (data.since_login <= MINUTES_ONLINE * 60) {
+      onlineList.push(data);
+    }
+  });
+  LogCRUD.getOnlineUsers(data, onlineList.length);
+  return res.send(validRequest(onlineList));
+});
+
+/// testToken
+app.get("/api/user/test_token/:token", (req, res) => {
+  data = addIpToData(req.body, req);
+  data.token = req.params.token;
+  if (!hasFields(data, ["token"]))
+    return res.send(badRequest("Required field missing: token"));
+
+  const tokenList = database.readTokens();
+  LogCRUD.testToken(data.token);
+  if (tokenList.hasOwnProperty(data.token)) {
+    return res.send(validRequest(database.readUsers()[tokenList[data.token].username]));
+  }
+  return res.send(badRequest("Invalid token"));
+});
 
 // Create 
 app.post("/cats", (req, res) => {  
@@ -33,7 +243,7 @@ app.post("/cats", (req, res) => {
     "status" : "Valid or Invalid"
   };
 
-  res.send(response);
+  return res.send(response);
 });
 
 // Read One
@@ -45,8 +255,7 @@ app.get("/cats/:id", (req, res) => {
     cat = catsList[req.params.id];
     cat["id"] = req.params.id;
     console.log(cat);
-    res.send(cat);
-    return ;
+    return res.send(cat);
   }
   res.status(404).send("Cat id not found");
 });
@@ -62,7 +271,7 @@ app.get("/cats", (req, res) => {
     cat["id"] = id;
     cats[id] = cat;
   });
-  res.send(cats);
+  return res.send(cats);
 });
 
 // Update
@@ -79,8 +288,7 @@ app.put("/cats/:id", (req, res) => {
     return ;
   }
   if (catsList[id].token != cat.token) {
-    res.send({"status" : "invalid", "reason" : "wrong access token"});
-    return ;
+    return res.send({"status" : "invalid", "reason" : "wrong access token"});
   }
   
   catsList[id] = cat;
@@ -88,7 +296,7 @@ app.put("/cats/:id", (req, res) => {
   
   console.log("Successfuly updated cat with id: " + id);
   
-  res.send({"status" : "valid"});
+  return res.send({"status" : "valid"});
 });
 
 // Delete
@@ -105,13 +313,12 @@ app.delete("/cats/:id", (req, res) => {
     return ;
   }
   if (catsList[id].token != cat.token) {
-    res.send({"status" : "invalid", "reason" : "wrong access token"});
-    return ;
+    return res.send({"status" : "invalid", "reason" : "wrong access token"});
   }
   delete catsList[id];
   console.log("Deleted cat with id: " + id);
   database.writeCats(catsList);
-  res.send({"status" : "valid"});
+  return res.send({"status" : "valid"});
 });
 
 // creeam database

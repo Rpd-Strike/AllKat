@@ -7,7 +7,7 @@ module.exports = {
         /// create/touch the directory
         fs.mkdirSync('./db', { recursive: true }, (err) => {
             if (err) throw err;
-        });
+        }); 
 
         /// create/touch the files
         const filenames = ['cats.json', 'tokens.json', 'users.json'];

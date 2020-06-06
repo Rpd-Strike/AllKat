@@ -6,7 +6,7 @@ function DeleteAllWithClass(classSelector)
     var elements = document.getElementsByClassName(classSelector);
     for (i = 0; i < elements.length; ++i) {
         elements[i].remove();
-    }
+    } 
 }
 
 function clearMainClasses()
