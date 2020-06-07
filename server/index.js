@@ -52,7 +52,8 @@ function hasFields(thePObj, listFields)
   return valid;
 } 
 
-// User API =============
+/// =====================  User API  ======================================================
+
 // Create User
 app.post("/api/user/create", (req, res) => {
   /// add IP to the request data and check if required fields are sent
@@ -231,6 +232,8 @@ app.get("/api/user/test_token/:token", (req, res) => {
   return res.send(badRequest("Invalid token"));
 });
 
+/// =====================  Cats API  ======================================================
+
 // Create 
 app.post("/cats", (req, res) => {  
   let catsList = database.readCats();
@@ -320,6 +323,14 @@ app.delete("/cats/:id", (req, res) => {
   console.log("Deleted cat with id: " + id);
   database.writeCats(catsList);
   return res.send({"status" : "valid"});
+});
+
+// Get user's cats
+app.get("/api/cat/user_all", (req, res) => {
+  const data = addIpToData(req.body, req);
+  const catsList = database.readCats();
+
+  res.send(validRequest("Work in progress"));
 });
 
 // creeam database
