@@ -63,7 +63,6 @@ function renderCreateCat()
 function generateCatData()
 {
     let cat = {};
-    cat.id = generate_token(C_ID_LEN);
     cat.availability = "free";
     cat.name = document.getElementsByName('name')[0].value;
     cat.race = document.getElementsByName('race')[0].value;
@@ -73,8 +72,6 @@ function generateCatData()
     cat.full_address = document.getElementsByName('full_address')[0].value;
     cat.email = document.getElementsByName('email')[0].value;
     cat.image = document.getElementsByName('image')[0].value;
-    cat.availability = 'free';
-    cat.token = generate_token(C_TOKEN_LEN);
     return cat;
 }
 
@@ -93,24 +90,33 @@ function resetForm()
 
 function formCatClick()
 {
-    let msg = "";
+    msg = "Loading";
+    document.querySelector('.extra-info span').innerHTML = msg;
+
     const catData = generateCatData();
 
     if (!formValidation(catData)) {
         msg = "invalid form data";
     }
     else {
-        msg = "Generated token: " + catData.token;
+        /// test
+        let reqData = {cat: catData, token: localStorage.getItem("token")};
+        console.log("Trying to create cat on behalf of: " + localStorage.getItem("username") + " with token: " + localStorage.getItem("token"));
 
-        console.log("Cat Data Received: ");
-        console.log(catData);
-
-        Prom_CreateSingleCat(catData).then(res => {
-            console.log("Successfully created cat");
-        });
+        Prom_CreateSingleCat(reqData)
+        .then(res => {
+            console.log(res);
+            msg = `Created cat with id: ` + res.data.id;
+        })
+        .catch(err => {
+            console.log(err);
+            msg = `Error, reason:  ` + err.reason;  
+        })
+        .finally(() => {
+            console.log(msg);
+            document.querySelector('.extra-info span').innerHTML = msg;
+        })
     }
-
-    document.querySelector('.extra-info span').innerHTML = msg;
 
     resetForm();
     RESCUE_ShowExtraInfo();
