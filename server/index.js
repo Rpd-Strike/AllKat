@@ -214,7 +214,8 @@ app.get("/api/user/all_online", (req, res) => {
     }
   });
   LogCRUD.getOnlineUsers(data, onlineList.length);
-  return res.send(validRequest(onlineList));
+  return res.send(validRequest({info: "online user list",
+                                user_list: onlineList}));
 });
 
 /// testToken
@@ -227,7 +228,8 @@ app.get("/api/user/test_token/:token", (req, res) => {
   const tokenList = database.readTokens();
   LogCRUD.testToken(data.token);
   if (tokenList.hasOwnProperty(data.token)) {
-    return res.send(validRequest(database.readUsers()[tokenList[data.token].username]));
+    return res.send(validRequest({info: "user data",
+                                  user_data: database.readUsers()[tokenList[data.token].username]}));
   }
   return res.send(badRequest("Invalid token"));
 });
