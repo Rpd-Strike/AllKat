@@ -33,7 +33,7 @@ module.exports = {
     },
 
     /// Cat API
-    generateCat: function(data, catID, username)
+    generateCat: function(data, username)
     {
         let message = HEADER + `CatAPI | User: ${username} from IP: ${data.ip} at time: --- and has data: `;
         console.log(message);
@@ -50,5 +50,12 @@ module.exports = {
     {
         let message = HEADER + `CatAPI | Requested all cats, from IP: ${data.ip}`;
         console.log(message);
+    },
+
+    updatedCat: function(data)
+    {
+        let message = HEADER + `CatAPI | Updated cat, User: ${data.user} from IP: ${data.ip} CatId: ${data.id}, updated data:`;
+        console.log(message);
+        console.log(data.cat);
     }
 }

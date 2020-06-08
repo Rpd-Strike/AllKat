@@ -274,17 +274,21 @@ app.post("/api/cat/create", (req, res) => {
   let catToken = generate_token(TOKEN_LENGTH);
   while (catList.hasOwnProperty(catToken))
     catToken = generate_token(TOKEN_LENGTH);
-  // console.log("Generated token");
- 
-  /// update db
+  // console.log("Generated cat id_token");
+
+  // add User Owner and numar vizualizari
   let catData = data.cat;
+  catData.user = checkObj.user;
+  catData.nr_viz = 0;
+ 
+  /// add token and write to db
   catData.id = catToken;
   catList[catToken] = catData;
   database.writeCats(catList);
   // console.log("Updated database");
 
   /// Log and send
-  LogCRUD.generateCat(data, catData.id, checkObj.username);
+  LogCRUD.generateCat(data, checkObj.user);
   res.send(validRequest({info: "Created cat",
                          id: catData.id}));
 });
@@ -325,28 +329,41 @@ app.get("/api/cat/all", (req, res) => {
 });
 
 // Update
-app.put("/cats/:id", (req, res) => {
+app.put("/api/cat/:id", (req, res) => {
+  const data = addIpToData(req.body, req);
+  if (!hasFields(data, ["token", "cat"]))
+    return res.send(badRequest("Empty required fields"));
+  if (!hasFields(data.cat, CAT_FIELDS))
+    return res.send(badRequest("Cat object has missing fields"));
+
   let catsList = database.readCats();
-  const id = req.params.id;
-  const cat = req.body;
-  if (id != cat.id) {
-    res.status(404).send("Cat id's mismatch between query string and object received in PUT method");
+  if (req.params.id != data.cat.id) {
+    res.send(badRequest("Cat id's mismatch between query string and object received in PUT method"));
     return ;
   }
-  if (!catsList.hasOwnProperty(id)) {
-    res.status(370).send("You are trying to UPDATE an inexistent cat");
+  if (!catsList.hasOwnProperty(data.cat.id)) {
+    res.send(badRequest("You are trying to UPDATE an inexistent cat"));
     return ;
-  }
-  if (catsList[id].token != cat.token) {
-    return res.send({"status" : "invalid", "reason" : "wrong access token"});
   }
   
-  catsList[id] = cat;
+  checkObj = getValidAndUserFromToken(data.token);
+  if (!checkObj.valid)
+    return res.send(badRequest("Bad Token"));
+  if (checkObj.user.toLowerCase() != catsList[data.cat.id].user 
+      && checkObj.user.toLowerCase() != "admin")
+    return res.send(badRequest("Bad Token (Bad User)"))
+  
+  /// the two fields that the user can't change, only the server
+  data.cat.user = checkObj.user;
+  data.cat.nr_viz = catsList[data.cat.id].nr_viz;
+
+  /// updating cat and saving to DB
+  catsList[data.cat.id] = data.cat;
   database.writeCats(catsList);
   
-  console.log("Successfuly updated cat with id: " + id);
-  
-  return res.send({"status" : "valid"});
+  LogCRUD.updatedCat(data);  
+  return res.send(validRequest({info: "Updated cat",
+                                cat: data.cat}));
 });
 
 // Delete
