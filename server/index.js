@@ -9,7 +9,7 @@ const app = express();
 const TOKEN_LENGTH = 15;
 const MINUTES_ONLINE = 5;
 const PORT = "3000";
-const CAT_FIELDS = ["availability", "name", "race", "gender", "city", "favorite_toy", "full_address", "email", "image"];
+const CAT_FIELDS = ["name", "race", "gender", "city", "favorite_toy", "full_address", "email", "image"];
 
 // Middleware
 app.use(morgan("tiny"));
@@ -107,7 +107,7 @@ app.post("/api/user/create", (req, res) => {
 
   /// Log information and send back to the client data
   LogCRUD.newUser(data);
-  return res.send(validRequest({info: "New user created with username: " + userObj.username}));
+  res.send(validRequest({info: "New user created with username: " + userObj.username}));
 })
 
 /// Login and on success generate token and send it back
@@ -158,8 +158,8 @@ app.put("/api/user/login", (req, res) => {
 
   /// Log info and send back request
   LogCRUD.successfullLogin(newObjectUser, data.ip);
-  return res.send(validRequest({info: "Logged in and generated token is: " + newToken,
-                                token: newToken}));
+  res.send(validRequest({info: "Logged in and generated token is: " + newToken,
+                         token: newToken}));
 });
 
 
@@ -192,7 +192,7 @@ app.delete("/api/user/logout", (req, res) => {
 
   /// Log info and send back request
   LogCRUD.successfulLogout(data);
-  return res.send(validRequest({info: "Logged out successfully",
+  res.send(validRequest({info: "Logged out successfully",
                          username: data.username,
                          token: data.token}));
 });
@@ -218,7 +218,7 @@ app.get("/api/user/all_online", (req, res) => {
     }
   });
   LogCRUD.getOnlineUsers(data, onlineList.length);
-  return res.send(validRequest({info: "online user list",
+  res.send(validRequest({info: "online user list",
                                 user_list: onlineList}));
 });
 
@@ -235,7 +235,7 @@ app.get("/api/user/test_token/:token", (req, res) => {
     return res.send(validRequest({info: "user data",
                                   user_data: database.readUsers()[tokenList[data.token].username]}));
   }
-  return res.send(badRequest("Invalid token"));
+  res.send(badRequest("Invalid token"));
 });
 
 /// =====================  Cats API  ======================================================
@@ -275,7 +275,7 @@ app.post("/api/cat/create", (req, res) => {
   while (catList.hasOwnProperty(catToken))
     catToken = generate_token(TOKEN_LENGTH);
   // console.log("Generated token");
-
+ 
   /// update db
   let catData = data.cat;
   catData.id = catToken;
@@ -290,31 +290,38 @@ app.post("/api/cat/create", (req, res) => {
 });
 
 // Read One
-app.get("/cats/:id", (req, res) => {
-  const catsList = database.readCats();
-  console.log("Requesting cat with ID: " + req.params.id);
+app.get("/api/cat/single/:id", (req, res) => {
+  let data = addIpToData(req.body, req);
+  data = {id: req.params.id};
 
-  if (catsList.hasOwnProperty(req.params.id)) {
-    cat = catsList[req.params.id];
-    cat["id"] = req.params.id;
-    console.log(cat);
-    return res.send(cat);
+  const catsList = database.readCats();
+
+  if (catsList.hasOwnProperty(data.id)) {
+    cat = catsList[data.id];
+    cat["id"] = data.id;
+    LogCRUD.getSingleCat(data, cat);
+    return res.send(validRequest({info: "Received cat",
+                                  cat: cat}));
   }
-  res.status(404).send("Cat id not found");
+  res.send(badRequest("Bad Cat ID"));
 });
 
 // Read All
-app.get("/cats", (req, res) => {
+app.get("/api/cat/all", (req, res) => {
+  const data = addIpToData(req.body, req);
   const catsList = database.readCats();
   console.log("Get ALL cats");
 
   cats = {};
   Object.keys(catsList).forEach(id => {
     cat = catsList[id];
-    cat["id"] = id;
+    cat.id = id;
     cats[id] = cat;
   });
-  return res.send(cats);
+
+  LogCRUD.getAllCats(data);
+  return res.send(validRequest({info: "List having all cats",
+                   cat_list: cats}));
 });
 
 // Update

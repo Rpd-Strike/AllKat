@@ -38,5 +38,17 @@ module.exports = {
         let message = HEADER + `CatAPI | User: ${username} from IP: ${data.ip} at time: --- and has data: `;
         console.log(message);
         console.log(data);
+    },
+
+    getSingleCat: function(data, cat)
+    {
+        let message = HEADER + `CatAPI | Requested single cat, from IP: ${data.ip} cat:`;
+        console.log(cat);
+    },
+
+    getAllCats: function(data)
+    {
+        let message = HEADER + `CatAPI | Requested all cats, from IP: ${data.ip}`;
+        console.log(message);
     }
 }
