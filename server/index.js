@@ -267,6 +267,8 @@ app.post("/api/cat/create", (req, res) => {
   const checkObj = getValidAndUserFromToken(data.token);
   if (!checkObj.valid)
     return res.send(badRequest("Bad token"));
+  if (checkObj.user.toLowerCase() == "guest")
+    return res.send(badRequest("Guest can not create cats"));
   // console.log("Token valid");
   
   /// generate new cat id
@@ -399,11 +401,30 @@ app.delete("/api/cat/single/delete", (req, res) => {
 });
 
 // Get user's cats
-app.get("/api/cat/user_all", (req, res) => {
-  const data = addIpToData(req.body, req);
+app.get("/api/cat/user_all/:token", (req, res) => {
+  let data = addIpToData(req.body, req);
   const catsList = database.readCats();
+  data.token = req.params.token;
 
-  res.send(validRequest("Work in progress"));
+  const checkData = getValidAndUserFromToken(data.token);
+  if (!checkData.valid)
+    return res.send(badRequest("Invalid token"));
+  
+  if (checkData.user.toLowerCase() == "admin") {
+    LogCRUD.getUserCats(checkData.user, data, Object.keys(catsList).length);
+    return res.send(validRequest({info: "List with all the cats user has access to",
+                                  cat_list: catsList}));
+  }
+
+  responseCatList = {};
+  Object.keys(catsList).forEach(id => {
+    if (catsList[id].user.toLowerCase() == checkData.user.toLowerCase())
+      responseCatList[id] = catsList[id];
+  });
+  LogCRUD.getUserCats(checkData.user, data, Object.keys(responseCatList).length);
+
+  res.send(validRequest({info: "List with all the cats user has access to",
+                         cat_list: responseCatList}));
 });
 
 // creeam database

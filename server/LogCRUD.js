@@ -63,5 +63,11 @@ module.exports = {
     {
         let message = HEADER + `CatAPI | Deleted cat by User: ${username} from IP: ${data.ip} catId: ${data.id}`;
         console.log(message);
+    },
+
+    getUserCats: function(username, data, lungime)
+    {
+        let message = HEADER + `CatAPI | Requeste all cats for user: ${username} from IP: ${data.ip}, number of cats: ${lungime}`;
+        console.log(message);
     }
 }
