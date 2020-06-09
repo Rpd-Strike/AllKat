@@ -57,5 +57,11 @@ module.exports = {
         let message = HEADER + `CatAPI | Updated cat, User: ${data.user} from IP: ${data.ip} CatId: ${data.id}, updated data:`;
         console.log(message);
         console.log(data.cat);
+    },
+
+    deleteCat: function(data, username)
+    {
+        let message = HEADER + `CatAPI | Deleted cat by User: ${username} from IP: ${data.ip} catId: ${data.id}`;
+        console.log(message);
     }
 }

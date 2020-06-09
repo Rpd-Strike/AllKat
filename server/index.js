@@ -324,7 +324,7 @@ app.get("/api/cat/all", (req, res) => {
   });
 
   LogCRUD.getAllCats(data);
-  return res.send(validRequest({info: "List having all cats",
+  res.send(validRequest({info: "List having all cats",
                    cat_list: cats}));
 });
 
@@ -362,30 +362,40 @@ app.put("/api/cat/:id", (req, res) => {
   database.writeCats(catsList);
   
   LogCRUD.updatedCat(data);  
-  return res.send(validRequest({info: "Updated cat",
+  res.send(validRequest({info: "Updated cat",
                                 cat: data.cat}));
 });
 
 // Delete
-app.delete("/cats/:id", (req, res) => {
+app.delete("/api/cat/single/delete", (req, res) => {
+  const data = addIpToData(req.body, req);
+  if (!hasFields(data, ["token", "id"]))
+    return res.send(badRequest("Missing required fields"));
+
+  /// find if cat actually exists
   let catsList = database.readCats();
-  const id = req.params.id;
-  const cat = req.body;
-  if (id != cat.id) {
-    res.status(404).send("Cat id's mismatch between query string and object received in DELETE method");
+  if (!catsList.hasOwnProperty(data.id)) {
+    res.send(badRequest("You are trying to DELETE an inexistent cat"));
     return ;
   }
-  if (!catsList.hasOwnProperty(id)) {
-    res.status(360).send("You are trying to DELETE an inexistent cat");
-    return ;
-  }
-  if (catsList[id].token != cat.token) {
-    return res.send({"status" : "invalid", "reason" : "wrong access token"});
-  }
-  delete catsList[id];
-  console.log("Deleted cat with id: " + id);
+
+  /// check validity of token
+  const checkData = getValidAndUserFromToken(data.token);
+  if (!checkData.valid)
+    return res.send(badRequest("Invalid token"));
+  
+  /// check ownership
+  if (catsList[data.id].user != checkData.user
+      && checkData.user != "admin")
+    return res.send(badRequest("You do not have ownership of this cat"));
+  
+  /// Delete and log
+  delete catsList[data.id];
   database.writeCats(catsList);
-  return res.send({"status" : "valid"});
+
+  LogCRUD.deleteCat(data, checkData.user);
+  res.send(validRequest({info: "Deleted cat",
+                         id: data.id}));  
 });
 
 // Get user's cats
