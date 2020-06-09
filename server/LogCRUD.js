@@ -1,4 +1,4 @@
-const HEADER = "LogCRUD:  ";
+const HEADER = " ===== LogCRUD: =====  ";
 
 module.exports = {
     /// User API

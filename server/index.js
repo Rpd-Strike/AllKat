@@ -232,8 +232,10 @@ app.get("/api/user/test_token/:token", (req, res) => {
   const tokenList = database.readTokens();
   LogCRUD.testToken(data.token);
   if (tokenList.hasOwnProperty(data.token)) {
+    let sentUser = database.readUsers()[tokenList[data.token].username];
+    delete sentUser.password;
     return res.send(validRequest({info: "user data",
-                                  user_data: database.readUsers()[tokenList[data.token].username]}));
+                                  user_data: sentUser}));
   }
   res.send(badRequest("Invalid token"));
 });

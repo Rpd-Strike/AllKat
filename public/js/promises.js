@@ -9,7 +9,9 @@ function wrapperPromise(fetch_getter)
         .then(response => response.json())
         .catch(err => {
             /// aici am eroare doar de la resp.json()
-            err = badResponse("JSON parse error");
+            if (typeof err.reason != 'undefined')
+                err = badResponse("JSON parse error");
+            
             console.log("Promise error reason: " + err.reason);
             return Promise.reject(err);
         })
