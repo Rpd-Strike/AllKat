@@ -9,6 +9,7 @@ const app = express();
 const TOKEN_LENGTH = 15;
 const MINUTES_ONLINE = 5;
 const PORT = "3000";
+const CAT_FIELDS = ["name", "race", "gender", "city", "favorite_toy", "full_address", "email", "image"];
 
 // Middleware
 app.use(morgan("tiny"));
@@ -26,6 +27,9 @@ function addIpToData(data, req)
 {
   let newData = data;
   newData.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  if (newData.ip.substr(0, 7) == "::ffff:") {
+    newData.ip = newData.ip.substr(7);
+  }
   return newData;
 }
 
@@ -50,9 +54,21 @@ function hasFields(thePObj, listFields)
     }
   });
   return valid;
-} 
+}
 
-// User API =============
+function generate_token(length) {
+  var result           = '';
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  // console.log("Token called with " + length + " - " + result);
+  return result;
+}
+
+/// =====================  User API  ======================================================
+
 // Create User
 app.post("/api/user/create", (req, res) => {
   /// add IP to the request data and check if required fields are sent
@@ -91,7 +107,7 @@ app.post("/api/user/create", (req, res) => {
 
   /// Log information and send back to the client data
   LogCRUD.newUser(data);
-  return res.send(validRequest({info: "New user created with username: " + userObj.username}));
+  res.send(validRequest({info: "New user created with username: " + userObj.username}));
 })
 
 /// Login and on success generate token and send it back
@@ -99,17 +115,6 @@ app.put("/api/user/login", (req, res) => {
   data = addIpToData(req.body, req);
   if (!hasFields(data, ["username", "password"])) {
     return res.send(badRequest("Required fields empty"));
-  }
-
-  function generate_token(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-       result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    // console.log("Token called with " + length + " - " + result);
-    return result;
   }
 
   function tokenExists(tokList, checkToken) {
@@ -153,8 +158,8 @@ app.put("/api/user/login", (req, res) => {
 
   /// Log info and send back request
   LogCRUD.successfullLogin(newObjectUser, data.ip);
-  return res.send(validRequest({info: "Logged in and generated token is: " + newToken,
-                                token: newToken}));
+  res.send(validRequest({info: "Logged in and generated token is: " + newToken,
+                         token: newToken}));
 });
 
 
@@ -187,7 +192,7 @@ app.delete("/api/user/logout", (req, res) => {
 
   /// Log info and send back request
   LogCRUD.successfulLogout(data);
-  return res.send(validRequest({info: "Logged out successfully",
+  res.send(validRequest({info: "Logged out successfully",
                          username: data.username,
                          token: data.token}));
 });
@@ -213,7 +218,8 @@ app.get("/api/user/all_online", (req, res) => {
     }
   });
   LogCRUD.getOnlineUsers(data, onlineList.length);
-  return res.send(validRequest(onlineList));
+  res.send(validRequest({info: "online user list",
+                                user_list: onlineList}));
 });
 
 /// testToken
@@ -226,100 +232,201 @@ app.get("/api/user/test_token/:token", (req, res) => {
   const tokenList = database.readTokens();
   LogCRUD.testToken(data.token);
   if (tokenList.hasOwnProperty(data.token)) {
-    return res.send(validRequest(database.readUsers()[tokenList[data.token].username]));
+    let sentUser = database.readUsers()[tokenList[data.token].username];
+    delete sentUser.password;
+    return res.send(validRequest({info: "user data",
+                                  user_data: sentUser}));
   }
-  return res.send(badRequest("Invalid token"));
+  res.send(badRequest("Invalid token"));
 });
 
+/// =====================  Cats API  ======================================================
+
+function getValidAndUserFromToken(token)
+{
+  const tokList = database.readTokens();
+  if (!hasFields(tokList, [token]))
+    return {valid: false, user: ""};
+  return {valid: true, user: tokList[token].username}; 
+}
+
 // Create 
-app.post("/cats", (req, res) => {  
-  let catsList = database.readCats();
-  cat = req.body;
-  console.log(cat);
+app.post("/api/cat/create", (req, res) => {
+  /// integrity of data
+  const data = addIpToData(req.body, req);
+  // console.log("Create cat with: ");
+  // console.log(data);
+  
+  if (!hasFields(data, ["token", "cat"])) {
+    return res.send(badRequest("Missing required data fields"));
+  }
+  if (!hasFields(data.cat, CAT_FIELDS)) {
+    return res.send(badRequest("Missing cat fields"));
+  }
+  // console.log("Create has all fields");
 
-  catsList[cat.id] = cat;
-  database.writeCats(catsList);
+  data.token = String(data.token);
+  const checkObj = getValidAndUserFromToken(data.token);
+  if (!checkObj.valid)
+    return res.send(badRequest("Bad token"));
+  if (checkObj.user.toLowerCase() == "guest")
+    return res.send(badRequest("Guest can not create cats"));
+  // console.log("Token valid");
+  
+  /// generate new cat id
+  let catList = database.readCats();
+  let catToken = generate_token(TOKEN_LENGTH);
+  while (catList.hasOwnProperty(catToken))
+    catToken = generate_token(TOKEN_LENGTH);
+  // console.log("Generated cat id_token");
 
-  response = {
-    "status" : "Valid or Invalid"
-  };
+  // add User Owner and numar vizualizari
+  let catData = data.cat;
+  catData.user = checkObj.user;
+  catData.nr_viz = 0;
+ 
+  /// add token and write to db
+  catData.id = catToken;
+  catList[catToken] = catData;
+  database.writeCats(catList);
+  // console.log("Updated database");
 
-  return res.send(response);
+  /// Log and send
+  LogCRUD.generateCat(data, checkObj.user);
+  res.send(validRequest({info: "Created cat",
+                         id: catData.id}));
 });
 
 // Read One
-app.get("/cats/:id", (req, res) => {
-  const catsList = database.readCats();
-  console.log("Requesting cat with ID: " + req.params.id);
+app.get("/api/cat/single/:id", (req, res) => {
+  let data = addIpToData(req.body, req);
+  data = {id: req.params.id};
 
-  if (catsList.hasOwnProperty(req.params.id)) {
-    cat = catsList[req.params.id];
-    cat["id"] = req.params.id;
-    console.log(cat);
-    return res.send(cat);
+  const catsList = database.readCats();
+
+  if (catsList.hasOwnProperty(data.id)) {
+    cat = catsList[data.id];
+    cat["id"] = data.id;
+    LogCRUD.getSingleCat(data, cat);
+    return res.send(validRequest({info: "Received cat",
+                                  cat: cat}));
   }
-  res.status(404).send("Cat id not found");
+  res.send(badRequest("Bad Cat ID"));
 });
 
 // Read All
-app.get("/cats", (req, res) => {
+app.get("/api/cat/all", (req, res) => {
+  const data = addIpToData(req.body, req);
   const catsList = database.readCats();
   console.log("Get ALL cats");
 
   cats = {};
   Object.keys(catsList).forEach(id => {
     cat = catsList[id];
-    cat["id"] = id;
+    cat.id = id;
     cats[id] = cat;
   });
-  return res.send(cats);
+
+  LogCRUD.getAllCats(data);
+  res.send(validRequest({info: "List having all cats",
+                   cat_list: cats}));
 });
 
 // Update
-app.put("/cats/:id", (req, res) => {
+app.put("/api/cat/:id", (req, res) => {
+  const data = addIpToData(req.body, req);
+  if (!hasFields(data, ["token", "cat"]))
+    return res.send(badRequest("Empty required fields"));
+  if (!hasFields(data.cat, CAT_FIELDS))
+    return res.send(badRequest("Cat object has missing fields"));
+
   let catsList = database.readCats();
-  const id = req.params.id;
-  const cat = req.body;
-  if (id != cat.id) {
-    res.status(404).send("Cat id's mismatch between query string and object received in PUT method");
+  if (req.params.id != data.cat.id) {
+    res.send(badRequest("Cat id's mismatch between query string and object received in PUT method"));
     return ;
   }
-  if (!catsList.hasOwnProperty(id)) {
-    res.status(370).send("You are trying to UPDATE an inexistent cat");
+  if (!catsList.hasOwnProperty(data.cat.id)) {
+    res.send(badRequest("You are trying to UPDATE an inexistent cat"));
     return ;
-  }
-  if (catsList[id].token != cat.token) {
-    return res.send({"status" : "invalid", "reason" : "wrong access token"});
   }
   
-  catsList[id] = cat;
+  checkObj = getValidAndUserFromToken(data.token);
+  if (!checkObj.valid)
+    return res.send(badRequest("Bad Token"));
+  if (checkObj.user.toLowerCase() != catsList[data.cat.id].user 
+      && checkObj.user.toLowerCase() != "admin")
+    return res.send(badRequest("Bad Token (Bad User)"))
+  
+  /// the two fields that the user can't change, only the server
+  data.cat.user = checkObj.user;
+  data.cat.nr_viz = catsList[data.cat.id].nr_viz;
+
+  /// updating cat and saving to DB
+  catsList[data.cat.id] = data.cat;
   database.writeCats(catsList);
   
-  console.log("Successfuly updated cat with id: " + id);
-  
-  return res.send({"status" : "valid"});
+  LogCRUD.updatedCat(data);  
+  res.send(validRequest({info: "Updated cat",
+                                cat: data.cat}));
 });
 
 // Delete
-app.delete("/cats/:id", (req, res) => {
+app.delete("/api/cat/single/delete", (req, res) => {
+  const data = addIpToData(req.body, req);
+  if (!hasFields(data, ["token", "id"]))
+    return res.send(badRequest("Missing required fields"));
+
+  /// find if cat actually exists
   let catsList = database.readCats();
-  const id = req.params.id;
-  const cat = req.body;
-  if (id != cat.id) {
-    res.status(404).send("Cat id's mismatch between query string and object received in DELETE method");
+  if (!catsList.hasOwnProperty(data.id)) {
+    res.send(badRequest("You are trying to DELETE an inexistent cat"));
     return ;
   }
-  if (!catsList.hasOwnProperty(id)) {
-    res.status(360).send("You are trying to DELETE an inexistent cat");
-    return ;
-  }
-  if (catsList[id].token != cat.token) {
-    return res.send({"status" : "invalid", "reason" : "wrong access token"});
-  }
-  delete catsList[id];
-  console.log("Deleted cat with id: " + id);
+
+  /// check validity of token
+  const checkData = getValidAndUserFromToken(data.token);
+  if (!checkData.valid)
+    return res.send(badRequest("Invalid token"));
+  
+  /// check ownership
+  if (catsList[data.id].user != checkData.user
+      && checkData.user != "admin")
+    return res.send(badRequest("You do not have ownership of this cat"));
+  
+  /// Delete and log
+  delete catsList[data.id];
   database.writeCats(catsList);
-  return res.send({"status" : "valid"});
+
+  LogCRUD.deleteCat(data, checkData.user);
+  res.send(validRequest({info: "Deleted cat",
+                         id: data.id}));  
+});
+
+// Get user's cats
+app.get("/api/cat/user_all/:token", (req, res) => {
+  let data = addIpToData(req.body, req);
+  const catsList = database.readCats();
+  data.token = req.params.token;
+
+  const checkData = getValidAndUserFromToken(data.token);
+  if (!checkData.valid)
+    return res.send(badRequest("Invalid token"));
+  
+  if (checkData.user.toLowerCase() == "admin") {
+    LogCRUD.getUserCats(checkData.user, data, Object.keys(catsList).length);
+    return res.send(validRequest({info: "List with all the cats user has access to",
+                                  cat_list: catsList}));
+  }
+
+  responseCatList = {};
+  Object.keys(catsList).forEach(id => {
+    if (catsList[id].user.toLowerCase() == checkData.user.toLowerCase())
+      responseCatList[id] = catsList[id];
+  });
+  LogCRUD.getUserCats(checkData.user, data, Object.keys(responseCatList).length);
+
+  res.send(validRequest({info: "List with all the cats user has access to",
+                         cat_list: responseCatList}));
 });
 
 // creeam database

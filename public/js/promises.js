@@ -2,22 +2,28 @@
 /// this function takes a fetch promise and wraps it to handle basic failures of it
 function wrapperPromise(fetch_getter)
 {
+    console.log("wrapper Promise");
+    
     return fetch_getter()
         .catch(err => Promise.reject(badResponse("Network or server error")))
         .then(response => response.json())
         .catch(err => {
-            /// verific daca eroarea nu este "de la mine"
-            if (typeof err.reason != 'undefined') {
+            /// aici am eroare doar de la resp.json()
+            if (typeof err.reason != 'undefined')
                 err = badResponse("JSON parse error");
-            }
+            
             console.log("Promise error reason: " + err.reason);
             return Promise.reject(err);
         })
-        // .then(resp => {
-        //     console.log("Promise fullfilled: ");
-        //     console.log(resp);
-        //     return Promise.resolve(resp);
-        // })
+        .then(resp => {
+            /// if i have bad request, then reject
+            console.log("Promise fullfilled: ");
+            console.log(resp);
+            if (typeof resp.reason != 'undefined')
+                return Promise.reject(resp);
+            /// no errors, finally
+            return Promise.resolve(resp);
+        })
 }
 
 async function Prom_GetSingleCat(catId)
@@ -71,13 +77,13 @@ async function Prom_CreateSingleCat(cat)
     console.log("Trying to create cat: ");
     console.log(cat);
     
-    const promise_getter = () => fetch("cats", {
+    const promise_getter = () => fetch("api/cat/create", {
         method : "POST",
         headers : {
             "Content-type": "application/json"
         },
         body : JSON.stringify(cat)
-    });
+    }); 
     return wrapperPromise(promise_getter);
 }
 

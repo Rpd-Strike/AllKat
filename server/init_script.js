@@ -26,6 +26,7 @@ module.exports = {
         funcList = [{read: db.readCats, write: db.writeCats},
                     {read: db.readTokens, write: db.writeTokens}, 
                     {read: db.readUsers, write: db.writeUsers}];
+        createdBackups = false;
         funcList.forEach(func => {
             try {
                 let content = func.read();
@@ -33,6 +34,8 @@ module.exports = {
                 // console.log(content);
             }
             catch(err_useless) {
+                if (createdBackups)
+                    return ;
                 // console.log(err_useless);
                 console.log("SETUP ERROR: Corrupt db file, when running: " + func.read.name);
                 /// make backup of db
@@ -44,6 +47,7 @@ module.exports = {
                
                 let content = {};
                 func.write(content);
+                createdBackups = true;
             }
         })
 
