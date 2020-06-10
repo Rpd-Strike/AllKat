@@ -41,6 +41,8 @@ function badRequest(err_description)
 
 function validRequest(data)
 {
+  console.log("validRequest data:");
+  console.log(data);
   return {status: "OK",
           data: data}
 }
@@ -133,18 +135,21 @@ app.put("/api/user/login", (req, res) => {
   /// Check if fields correspond to valid request
   data.password = String(data.password);
   data.username = String(data.username).toLowerCase();
-  let existingUsername = false, goodPassword = false;
+  let existingUsername = false, goodPassword = false, isUserBlocked = false;
   let userList = database.readUsers();
   Object.keys(userList).forEach(username => {
     if (data.username.toLowerCase() == username.toLowerCase()) {
       existingUsername = true;
       goodPassword = (userList[username].password == data.password);
+      isUserBlocked = userList[username].blocked;
     }
   })
   if (!existingUsername)
     return res.send(badRequest("Username doesn't exist"));
   if (!goodPassword)
     return res.send(badRequest("Password is wrong"));
+  if (isUserBlocked)
+    return res.send(badRequest("User is Blocked!"));
 
   /// Generate new token and save it
   let tokenList = database.readTokens();
@@ -252,7 +257,7 @@ app.get("/api/user/test_token/:token", (req, res) => {
 /// === Admin API =======
 
 app.delete("/api/admin", (req, res) => {
-  data = addIpToData(req.body, req);
+  const data = addIpToData(req.body, req);
   if (!hasFields(data, ["token", "user"]))
     return res.send(badRequest("Missing required fields"));
 
@@ -273,8 +278,6 @@ app.delete("/api/admin", (req, res) => {
       delete tokenList[tok];
     }
   });
-  console.log("Tokens after delete:");
-  console.log(tokenList);
   database.writeTokens(tokenList);
 
   delete userList[data.user];
@@ -283,6 +286,42 @@ app.delete("/api/admin", (req, res) => {
   
   res.send(validRequest({info: "Deleted user",
                          deleted_user: data.user}));
+});
+
+app.put("/api/admin/block", (req, res) => {
+  const data = addIpToData(req.body, req);
+  if (!hasFields(data, ["token", "user", "status"]))
+    return res.send(badRequest("Missing required fields"));
+  
+  userData = getValidAndUserFromToken(data.token);
+  if (!userData.valid)
+    return res.send(badRequest("Bad Token"));
+  if (userData.user.toLowerCase() != "admin")
+    return res.send(badRequest("You are not admin"));
+
+  let userList = database.readUsers();
+  if (!userList.hasOwnProperty(data.user))
+    return res.send(badRequest("Inexistent user"));
+
+  if (data.status == true) {
+    // delete tokens if he's getting blocked
+    let tokenList = database.readTokens();
+    Object.keys(tokenList).forEach(tok => {
+      if (tokenList[tok].username.toLowerCase() == data.user.toLowerCase()) {
+        delete tokenList[tok];
+      }
+    });
+    database.writeTokens(tokenList);
+  }
+
+  data.user = data.user.toLowerCase();
+  userList[data.user].blocked = (data.status == true);
+  database.writeUsers(userList);
+
+  LogCRUD.blockUser(data);
+  res.send(validRequest({info: "Block/Unblock user",
+                         user: data.user,
+                         status: userList[data.user].blocked}));
 });
 
 

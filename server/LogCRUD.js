@@ -76,5 +76,11 @@ module.exports = {
     {
         let message = HEADER + `CatAPI | Admin deletes user: ${data.user} from IP: ${data.ip}`;
         console.log(message);
+    },
+
+    blockUser: function(data)
+    {
+        let message = HEADER + `CatAPI | Admin changes status of user: ${data.user} from IP: ${data.ip}, is user blocked? ${data.status}`;
+        console.log(message);
     }
 }
