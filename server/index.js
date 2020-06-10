@@ -56,6 +56,14 @@ function hasFields(thePObj, listFields)
   return valid;
 }
 
+function getValidAndUserFromToken(token)
+{
+  const tokList = database.readTokens();
+  if (!hasFields(tokList, [token]))
+    return {valid: false, user: ""};
+  return {valid: true, user: tokList[token].username}; 
+}
+
 function generate_token(length) {
   var result           = '';
   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -123,7 +131,7 @@ app.put("/api/user/login", (req, res) => {
 
   /// Check if fields correspond to valid request
   data.password = String(data.password);
-  data.username = String(data.username);
+  data.username = String(data.username).toLowerCase();
   let existingUsername = false, goodPassword = false;
   let userList = database.readUsers();
   Object.keys(userList).forEach(username => {
@@ -240,15 +248,34 @@ app.get("/api/user/test_token/:token", (req, res) => {
   res.send(badRequest("Invalid token"));
 });
 
-/// =====================  Cats API  ======================================================
+/// === Admin API =======
 
-function getValidAndUserFromToken(token)
-{
-  const tokList = database.readTokens();
-  if (!hasFields(tokList, [token]))
-    return {valid: false, user: ""};
-  return {valid: true, user: tokList[token].username}; 
-}
+app.delete("/api/admin", (req, res) => {
+  data = addIpToData(req.body, req);
+  if (!hasFields(data, ["token", "user"]))
+    return res.send(badRequest("Missing required fields"));
+
+  userData = getValidAndUserFromToken(data.token);
+  if (!userData.valid)
+    return res.send(badRequest("Bad Token"));
+  if (userData.user.toLowerCase() != "admin")
+    return res.send(badRequest("You are not admin"));
+  
+  let userList = database.readUsers();
+  if (!userList.hasOwnProperty(data.user))
+    return res.send(badRequest("Inexistent user"));
+  
+  delete userList[data.user];
+  database.writeUsers(userList);
+  LogCRUD.deleteUser(data);
+  
+  res.send(validRequest({info: "Deleted user",
+                         deleted_user: data.user}));
+});
+
+
+
+/// =====================  Cats API  ======================================================
 
 // Create 
 app.post("/api/cat/create", (req, res) => {

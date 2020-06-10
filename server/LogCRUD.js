@@ -67,7 +67,14 @@ module.exports = {
 
     getUserCats: function(username, data, lungime)
     {
-        let message = HEADER + `CatAPI | Requeste all cats for user: ${username} from IP: ${data.ip}, number of cats: ${lungime}`;
+        let message = HEADER + `CatAPI | Requested all cats for user: ${username} from IP: ${data.ip}, number of cats: ${lungime}`;
+        console.log(message);
+    },
+
+    /// Admin API
+    deleteUser: function(data)
+    {
+        let message = HEADER + `CatAPI | Admin deletes user: ${data.user} from IP: ${data.ip}`;
         console.log(message);
     }
 }
