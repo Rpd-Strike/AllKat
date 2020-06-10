@@ -67,7 +67,26 @@ module.exports = {
 
     getUserCats: function(username, data, lungime)
     {
-        let message = HEADER + `CatAPI | Requeste all cats for user: ${username} from IP: ${data.ip}, number of cats: ${lungime}`;
+        let message = HEADER + `CatAPI | Requested all cats for user: ${username} from IP: ${data.ip}, number of cats: ${lungime}`;
+        console.log(message);
+    },
+
+    /// Admin API
+    deleteUser: function(data)
+    {
+        let message = HEADER + `AdminAPI | Deletes user: ${data.user} from IP: ${data.ip}`;
+        console.log(message);
+    },
+
+    blockUser: function(data)
+    {
+        let message = HEADER + `AdminAPI | Change status of user: ${data.user} from IP: ${data.ip}, is user blocked? ${data.status}`;
+        console.log(message);
+    },
+
+    resetUser: function(data)
+    {
+        let message = HEADER + `AdminAPI | Reset password for user: ${data.user} from IP: ${data.ip}`;
         console.log(message);
     }
 }
