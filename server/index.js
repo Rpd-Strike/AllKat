@@ -108,6 +108,7 @@ app.post("/api/user/create", (req, res) => {
   userObj = {
     password: data.password,
     username: data.username,
+    blocked: false,
     time_logged: JSON.stringify(new Date(1980, 1, 1))
   }
   userList[userObj.username] = userObj;
@@ -265,6 +266,17 @@ app.delete("/api/admin", (req, res) => {
   if (!userList.hasOwnProperty(data.user))
     return res.send(badRequest("Inexistent user"));
   
+  /// delete all its tokens
+  let tokenList = database.readTokens();
+  Object.keys(tokenList).forEach(tok => {
+    if (tokenList[tok].username.toLowerCase() == data.user.toLowerCase()) {
+      delete tokenList[tok];
+    }
+  });
+  console.log("Tokens after delete:");
+  console.log(tokenList);
+  database.writeTokens(tokenList);
+
   delete userList[data.user];
   database.writeUsers(userList);
   LogCRUD.deleteUser(data);
@@ -272,7 +284,6 @@ app.delete("/api/admin", (req, res) => {
   res.send(validRequest({info: "Deleted user",
                          deleted_user: data.user}));
 });
-
 
 
 /// =====================  Cats API  ======================================================
