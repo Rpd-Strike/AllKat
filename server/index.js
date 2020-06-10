@@ -292,8 +292,9 @@ app.put("/api/admin/block", (req, res) => {
   const data = addIpToData(req.body, req);
   if (!hasFields(data, ["token", "user", "status"]))
     return res.send(badRequest("Missing required fields"));
-  
-  userData = getValidAndUserFromToken(data.token);
+  data.user = data.user.toLowerCase();
+
+  const userData = getValidAndUserFromToken(data.token);
   if (!userData.valid)
     return res.send(badRequest("Bad Token"));
   if (userData.user.toLowerCase() != "admin")
@@ -314,7 +315,6 @@ app.put("/api/admin/block", (req, res) => {
     database.writeTokens(tokenList);
   }
 
-  data.user = data.user.toLowerCase();
   userList[data.user].blocked = (data.status == true);
   database.writeUsers(userList);
 
@@ -324,6 +324,29 @@ app.put("/api/admin/block", (req, res) => {
                          status: userList[data.user].blocked}));
 });
 
+app.put("/api/admin/reset", (req, res) => {
+  const data = addIpToData(req.body, req);
+  if (!hasFields(data, ["token", "user", "password"]))
+    return res.send(badRequest("Missing required fields"));
+  data.user = data.user.toLowerCase();
+
+  const userData = getValidAndUserFromToken(data.token);
+  if (!userData.valid)
+    return res.send(badRequest("Bad Token"));
+  if (userData.user.toLowerCase() != "admin")
+    return res.send(badRequest("You are not admin"));
+
+  let userList = database.readUsers();
+  if (!userList.hasOwnProperty(data.user))
+    return res.send(badRequest("Inexistent user"));
+
+  userList[data.user].password = data.password;
+  database.writeUsers(userList);
+
+  LogCRUD.resetUser(data);
+  res.send(validRequest({info: "Reset Password",
+                         user: data.user}));
+})
 
 /// =====================  Cats API  ======================================================
 

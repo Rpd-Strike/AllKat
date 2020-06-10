@@ -74,13 +74,19 @@ module.exports = {
     /// Admin API
     deleteUser: function(data)
     {
-        let message = HEADER + `CatAPI | Admin deletes user: ${data.user} from IP: ${data.ip}`;
+        let message = HEADER + `AdminAPI | Deletes user: ${data.user} from IP: ${data.ip}`;
         console.log(message);
     },
 
     blockUser: function(data)
     {
-        let message = HEADER + `CatAPI | Admin changes status of user: ${data.user} from IP: ${data.ip}, is user blocked? ${data.status}`;
+        let message = HEADER + `AdminAPI | Change status of user: ${data.user} from IP: ${data.ip}, is user blocked? ${data.status}`;
+        console.log(message);
+    },
+
+    resetUser: function(data)
+    {
+        let message = HEADER + `AdminAPI | Reset password for user: ${data.user} from IP: ${data.ip}`;
         console.log(message);
     }
 }
