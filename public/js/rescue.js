@@ -28,29 +28,17 @@ const RescueHTML = `
 
     <div class="extra-info">
       <h4><span><span></h4>
-      <i class="fas fa-times" onclick="RESCUE_HideExtraInfo()"></i>
+      <i class="fas fa-times" onclick="Utils_HideExtraInfo()"></i>
     </div>
 
     </form>
     </div>
 </div>
 `;
- 
-function RESCUE_ShowExtraInfo()
-{
-    element = document.getElementsByClassName('extra-info')[0];
-    element.style.display = 'flex';
-}
-
-function RESCUE_HideExtraInfo()
-{
-    element = document.getElementsByClassName('extra-info')[0];
-    element.style.display = 'none';
-}
 
 function showRescue()
 {
-    clearMainClasses();
+    Utils_clearMainClasses();
     renderCreateCat();   
 }
 
@@ -85,7 +73,7 @@ function formValidation(cat)
 function resetForm()
 {
     document.getElementsByName('name')[0].value = "";
-    RESCUE_HideExtraInfo();
+    Utils_HideExtraInfo();
 }
 
 function formCatClick()
@@ -97,6 +85,7 @@ function formCatClick()
 
     if (!formValidation(catData)) {
         msg = "invalid form data";
+        document.querySelector('.extra-info span').innerHTML = msg;
     }
     else {
         /// test
@@ -113,11 +102,11 @@ function formCatClick()
             msg = `Error, reason:  ` + err.reason;  
         })
         .finally(() => {
-            console.log(msg);
+            console.log("finally: " + msg);
             document.querySelector('.extra-info span').innerHTML = msg;
         })
     }
 
     resetForm();
-    RESCUE_ShowExtraInfo();
+    Utils_ShowExtraInfo();
 }

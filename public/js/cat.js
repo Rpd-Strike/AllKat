@@ -30,8 +30,8 @@ CatHTML = `
     <label>Access token</label>
     <input type="text" class="input" name="token" placeholder="None - Access token here">      
     </fieldset>
-    <input class="input" type="button" value="Update information" onclick="UpdateCatClick()" />
-    <input class="input" type="button" value="Delete" onclick="DeleteCatClick()" />
+    <input class="input" type="button" value="Update information" onclick="Cat_UpdateCatClick()" />
+    <input class="input" type="button" value="Delete" onclick="Cat_DeleteCatClick()" />
 
     <div class="extra-info">
       <h4><span><span></h4>
@@ -54,7 +54,7 @@ function CAT_HideExtraInfo()
     element.style.display = 'none';
 }
 
-function UpdateCatClick()
+function Cat_UpdateCatClick()
 {
     cat = {};
     catid = document.getElementsByName('id')[0].value;
@@ -75,15 +75,15 @@ function UpdateCatClick()
     });
 }
 
-function DeleteCatClick()
+function Cat_DeleteCatClick()
 {
     catid = document.getElementsByName('id')[0].value;
     token = document.getElementsByName('token')[0].value;
-    Prom_DeleteSingleCat(catid, token).then(res => {
+    Prom_DeleteSingleCat(catid, localStorage.getItem("token")).then(res => {
         console.log("response from server: ");
         console.log(res);
         if (res.status == "valid") {
-            showAdopt();
+            Adopt_showAdopt();
         } else {
             if (res.status != "valid") {
                 document.querySelector('h4>span').innerHTML = "Wrong access token or bad request";
@@ -93,7 +93,7 @@ function DeleteCatClick()
     });
 }
 
-function PopulateForm(cat)
+function Cat_PopulateForm(cat)
 {
     document.querySelector('legend span').innerHTML = cat.name;
     document.getElementsByName('name')[0].value = cat.name;
@@ -107,7 +107,7 @@ function PopulateForm(cat)
     document.getElementsByName('availability')[0].value = cat.availability;
 }
 
-function showCat(catId)
+function Cat_showCat(catId)
 {
     mainEl = document.getElementById("main")
     mainEl.innerHTML = CatHTML;
@@ -115,8 +115,9 @@ function showCat(catId)
     document.getElementsByName('id')[0].value = catId;
 
     Prom_GetSingleCat(catId).then(res => {
+        cat = res.data;
         console.log("I got this cat to view: ");
-        console.log(res);
-        PopulateForm(res);
+        console.log(cat);
+        Cat_PopulateForm(cat);
     });
 }

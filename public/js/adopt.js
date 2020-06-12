@@ -1,25 +1,24 @@
-function showAdopt()
+function Adopt_showAdopt()
 {
-    mainEl = document.getElementById("main")
-    mainEl.innerHTML = ``;
-    // mainEl.classList.add("view-cat");
+    Utils_ClearMain();
 
     /// Maybe time this operation for Final Project
 
     Prom_GetAllCats().then(resp => {
+        const allCats = resp.data;
         console.log("Show Adopt: Received cats from Server: ");
-        console.log(resp);
-        renderAllCats(resp);
+        console.log(allCats);
+        Adopt_renderAllCats(allCats);
 
-        if (Object.keys(resp).length < 1) {
-            renderEmptyMsg();
+        if (Object.keys(allCats).length < 1) {
+            Adopt_renderEmptyMsg();
         }
     });
 }
 
-function renderEmptyMsg()
+function Adopt_renderEmptyMsg()
 {
-    DeleteAllWithClass("cats-flexbox");
+    Utils_DeleteAllWithClass("cats-flexbox");
     catsEl = document.createElement("div");
     catsEl.classList.add("cats-flexbox");
 
@@ -33,7 +32,7 @@ function renderEmptyMsg()
     document.getElementById("main").appendChild(catsEl);
 }
 
-function renderCat(fatherNode, cat)
+function Adopt_renderCat(fatherNode, cat)
 {
     // console.log("Render Cat: ", cat);
 
@@ -41,7 +40,7 @@ function renderCat(fatherNode, cat)
 
     html = `
         <img src="${cat.image}">
-        <button class="btn-cat-info" onclick="OnClickCat('${cat.id}')">
+        <button class="btn-cat-info" onclick="Adopt_OnClickCat('${cat.id}')">
           <i class="fas fa-info-circle"></i>
           More
         </button>
@@ -62,21 +61,21 @@ function renderCat(fatherNode, cat)
     fatherNode.appendChild(catEl);
 }
 
-function renderAllCats(allCats)
+function Adopt_renderAllCats(allCats)
 {
-    DeleteAllWithClass("cats-flexbox");
+    Utils_DeleteAllWithClass("cats-flexbox");
     catsEl = document.createElement("div");
     catsEl.classList.add("cats-flexbox");
     
     Object.keys(allCats).forEach(id => {
         console.log("before render id: " + id);
-        renderCat(catsEl, allCats[id]);
+        Adopt_renderCat(catsEl, allCats[id]);
     });
 
     document.getElementById("main").appendChild(catsEl);
 }
 
-function OnClickCat(catId)
+function Adopt_OnClickCat(catId)
 {
-    showCat(catId);
+    Cat_showCat(catId);
 }

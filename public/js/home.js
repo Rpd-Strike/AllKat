@@ -12,7 +12,7 @@ const HomeHTML = `
         </div>
         <div class="adopt-entry">
             <p>Adopt and take care</p>
-            <button class="btn" onclick="showAdopt()">Adopt</button> 
+            <button class="btn" onclick="Adopt_showAdopt()">Adopt</button> 
         </div>
         <div class="rescue-entry">
             <p>Help a cat find a warm place
@@ -22,9 +22,9 @@ const HomeHTML = `
     </div>
 `;
 
-function showHome()
+function Home_showHome()
 {
-    clearMainClasses();
+    Utils_clearMainClasses();
     mainEl = document.getElementById("main");
 
     mainEl.innerHTML = HomeHTML;

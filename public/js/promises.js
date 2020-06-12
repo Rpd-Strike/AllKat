@@ -28,7 +28,7 @@ function wrapperPromise(fetch_getter)
 
 async function Prom_GetSingleCat(catId)
 {
-    const promise_getter = () => fetch("cats/" + catId, {
+    const promise_getter = () => fetch("api/cat/single/" + catId, {
         method : "GET",
         headers : {
             "Content-type": "application/json"
@@ -39,7 +39,7 @@ async function Prom_GetSingleCat(catId)
 
 async function Prom_GetAllCats()
 {
-    const promise_getter = () => fetch("cats", { 
+    const promise_getter = () => fetch("api/cat/all", { 
         method : "GET",
         headers : {
             "Content-type": "application/json"
@@ -50,7 +50,7 @@ async function Prom_GetAllCats()
 
 async function Prom_DeleteSingleCat(catId, token)
 {
-    const promise_getter = () => fetch("cats/" + catId, {
+    const promise_getter = () => fetch("api/cat/single/delete", {
         method : "DELETE",
         headers : {
             "Content-type": "application/json"
@@ -91,12 +91,29 @@ async function Prom_TestToken(token)
 {
     console.log("Testing token: " + token);
 
-    const promise_getter = () => fetch('user/test_token', {
+    const promise_getter = () => fetch('api/user/test_token/' + token, {
         method : "GET",
         headers : {
             "Content-type": "application/json"
+        }
+    });
+    return wrapperPromise(promise_getter);
+}
+
+/// ===== User =======
+
+function Prom_UserLogin(username, password)
+{
+    console.log("Login promise:");
+    console.log(username);
+    console.log(password);
+    const promise_getter = () => fetch('api/user/login', {
+        method: "PUT",
+        headers : {
+            "Content-type": "application/json"
         },
-        body : JSON.stringify({token: token})
+        body : JSON.stringify({username: username,
+                               password: password})
     });
     return wrapperPromise(promise_getter);
 }

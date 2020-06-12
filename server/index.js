@@ -123,7 +123,7 @@ app.put("/api/user/login", (req, res) => {
 
   /// Check if fields correspond to valid request
   data.password = String(data.password);
-  data.username = String(data.username);
+  data.username = String(data.username).toLowerCase();
   let existingUsername = false, goodPassword = false;
   let userList = database.readUsers();
   Object.keys(userList).forEach(username => {
@@ -234,6 +234,7 @@ app.get("/api/user/test_token/:token", (req, res) => {
   if (tokenList.hasOwnProperty(data.token)) {
     let sentUser = database.readUsers()[tokenList[data.token].username];
     delete sentUser.password;
+    console.log("OK TOKEN");
     return res.send(validRequest({info: "user data",
                                   user_data: sentUser}));
   }

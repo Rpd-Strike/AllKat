@@ -1,7 +1,7 @@
-function CreateNav()
+function Rend_CreateNav()
 {
     console.log("Creating Navbar");
-    DeleteAllWithClass("nav");
+    Utils_DeleteAllWithClass("nav");
     let navbar = document.createElement("nav");
     navbar.classList.add("nav");
     
@@ -9,13 +9,13 @@ function CreateNav()
     img.setAttribute('class', 'nav-logo');
     img.setAttribute('src', 'img/logo.png');
     img.setAttribute('alt', 'All Kat Updated');
-    img.setAttribute('onclick', 'showHome()');
+    img.setAttribute('onclick', 'Home_showHome()');
 
     navbar.appendChild(img);
 
     let adopt = document.createElement('button');
     adopt.setAttribute('class', 'btn');
-    adopt.setAttribute('onclick', 'showAdopt()');
+    adopt.setAttribute('onclick', 'Adopt_showAdopt()');
     adopt.textContent = 'Adopt';
 
     navbar.appendChild(adopt); 
@@ -30,17 +30,17 @@ function CreateNav()
     document.getElementById("allkat-app").appendChild(navbar);   
 }
 
-function CreateHome()
+function Rend_CreateHome()
 {
     let main = document.createElement("main");
     main.id = "main";
     document.getElementById("allkat-app").appendChild(main);
 }
 
-function CreateFooter()
+function Rend_CreateFooter()
 {
     console.log("Creating Footer");
-    DeleteAllWithClass("footer");
+    Utils_DeleteAllWithClass("footer");
     let footer = document.createElement("footer");
     footer.classList.add("footer");
     footer.innerHTML = "\
