@@ -13,7 +13,7 @@ function User_LoadUser()
     function showLoggedUser() {
         Utils_DeleteAllWithClass('nav-user');
         document.querySelector('nav.nav').innerHTML += `
-    <button class="btn nav-user" onclick="Logout()">Logout</button>
+    <button class="btn nav-user" onclick="User_LogoutAction()">Logout</button>
     <span class="nav-user">${localStorage.getItem("username")}</span>
     `;
     }
@@ -51,7 +51,7 @@ const LoginHTML = `
     <label>Username</label>
     <input class="input" type="text" name="username" placeholder="Your username">
     <label>Password</label>
-    <input type="text" class="input" name="password" placeholder="Password">
+    <input type="password" class="input" name="password" placeholder="Password">
           
     </fieldset>
     <input class="input" type="button" value="Login" onclick="User_LoginAttempt()">
@@ -88,6 +88,12 @@ function User_LoginAction()
 {
     Utils_ClearMain();
     document.getElementById("main").innerHTML = LoginHTML;
+}
+
+function User_LogoutAction()
+{
+    Prom_UserLogout(localStorage.getItem("username"), localStorage.getItem("token"));
+    localStorage.setItem("token", "");
 }
 
 function User_RegisterAction()

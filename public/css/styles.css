@@ -219,6 +219,7 @@ html {
 .form-style .input[type="search"],
 .form-style .input[type="time"],
 .form-style .input[type="url"],
+.form-style .input[type="password"],
 .form-style textarea,
 .form-style select {
 	font-family: Roboto, Georgia, "Times New Roman", Times, serif;

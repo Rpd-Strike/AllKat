@@ -180,7 +180,7 @@ app.delete("/api/user/logout", (req, res) => {
     return true;
   }
 
-  data.username = String(data.username);
+  data.username = String(data.username).toLowerCase();
   data.token = String(data.token);
   if (!validUserAndToken(data.username, data.token)) {
     return res.send(badRequest("Username and Token mismatch or invalid"));

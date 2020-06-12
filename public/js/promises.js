@@ -117,3 +117,17 @@ function Prom_UserLogin(username, password)
     });
     return wrapperPromise(promise_getter);
 }
+
+function Prom_UserLogout(username, token)
+{
+    console.log("Logout promise:");
+    const promise_getter = () => fetch('api/user/logout', {
+        method: "DELETE",
+        headers : {
+            "Content-type": "application/json"
+        },
+        body : JSON.stringify({username: username,
+                               token: token})
+    });
+    return wrapperPromise(promise_getter);
+}
