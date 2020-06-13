@@ -5,7 +5,7 @@ function Adopt_showAdopt()
     /// Maybe time this operation for Final Project
 
     Prom_GetAllCats().then(resp => {
-        const allCats = resp.data;
+        const allCats = resp.data.cat_list;
         console.log("Show Adopt: Received cats from Server: ");
         console.log(allCats);
         Adopt_renderAllCats(allCats);

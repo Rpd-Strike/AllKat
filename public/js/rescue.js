@@ -36,10 +36,21 @@ const RescueHTML = `
 </div>
 `;
 
+const RescueNoUserHTML = `
+    <p class="info-message">You have to be logged in to use this feature</p>
+`;
+
+
 function showRescue()
 {
     Utils_clearMainClasses();
-    renderCreateCat();   
+    if (localStorage.getItem("username").toLowerCase() == "guest") {
+        main = document.getElementById("main");
+        main.innerHTML = RescueNoUserHTML;
+    }
+    else {
+        renderCreateCat();   
+    }
 }
 
 function renderCreateCat()

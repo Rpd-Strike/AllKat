@@ -102,7 +102,7 @@ app.post("/api/user/create", (req, res) => {
     username: data.username,
     time_logged: JSON.stringify(new Date(1980, 1, 1))
   }
-  userList[userObj.username] = userObj;
+  userList[userObj.username.toLowerCase()] = userObj;
   database.writeUsers(userList);
 
   /// Log information and send back to the client data
@@ -159,7 +159,8 @@ app.put("/api/user/login", (req, res) => {
   /// Log info and send back request
   LogCRUD.successfullLogin(newObjectUser, data.ip);
   res.send(validRequest({info: "Logged in and generated token is: " + newToken,
-                         token: newToken}));
+                         token: newToken,
+                         user: userList[data.username].username}));
 });
 
 
@@ -232,9 +233,9 @@ app.get("/api/user/test_token/:token", (req, res) => {
   const tokenList = database.readTokens();
   LogCRUD.testToken(data.token);
   if (tokenList.hasOwnProperty(data.token)) {
-    let sentUser = database.readUsers()[tokenList[data.token].username];
+    let sentUser = database.readUsers()[tokenList[data.token].username.toLowerCase()];
     delete sentUser.password;
-    console.log("OK TOKEN");
+    // console.log("OK TOKEN");
     return res.send(validRequest({info: "user data",
                                   user_data: sentUser}));
   }
@@ -285,6 +286,7 @@ app.post("/api/cat/create", (req, res) => {
   let catData = data.cat;
   catData.user = checkObj.user;
   catData.nr_viz = 0;
+  catData.availability = "free";
  
   /// add token and write to db
   catData.id = catToken;
@@ -366,7 +368,7 @@ app.put("/api/cat/:id", (req, res) => {
   catsList[data.cat.id] = data.cat;
   database.writeCats(catsList);
   
-  LogCRUD.updatedCat(data);  
+  LogCRUD.updatedCat(data);  //// TODO add username here
   res.send(validRequest({info: "Updated cat",
                                 cat: data.cat}));
 });

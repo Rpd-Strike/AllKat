@@ -29,6 +29,9 @@ function User_LoadUser()
     if (localStorage.getItem("token") === null) {
         setGuest();
     }
+    else if (localStorage.getItem("token").length < 1) {
+        setGuest();
+    }
     else {
         Prom_TestToken(localStorage.getItem("token"))
         .then(resp => {
@@ -47,7 +50,7 @@ const LoginHTML = `
 <div class="form-style">
     <form>
     <fieldset>
-    <legend><i class="fas fa-sign-in-alt"></i> Login </legend>
+    <legend><i class="fas fa-sign-in-alt"></i> <span class="form-title">Login</span> </legend>
     <label>Username</label>
     <input class="input" type="text" name="username" placeholder="Your username">
     <label>Password</label>
@@ -55,6 +58,32 @@ const LoginHTML = `
           
     </fieldset>
     <input class="input" type="button" value="Login" onclick="User_LoginAttempt()">
+
+    <div class="extra-info">
+      <h4><span><span></h4>
+      <i class="fas fa-times" onclick="Utils_HideExtraInfo()"></i>
+    </div>
+
+    </form>
+    </div>
+</div>
+`;
+
+const RegisterHTML = `
+<div class="form-wrapper">
+<div class="form-style">
+    <form>
+    <fieldset>
+    <legend><i class="fas fa-user-plus"></i> <span class="form-title">Register</span> </legend>
+    <label>Username</label>
+    <input class="input" type="text" name="username" placeholder="Your username">
+    <label>Password</label>
+    <input type="password" class="input" name="password" placeholder="Password">
+    <label>Retype Password</label>
+    <input type="password" class="input" name="repeatpassword" placeholder="Retype Password">
+          
+    </fieldset>
+    <input class="input" type="button" value="Register" onclick="User_RegisterAttempt()">
 
     <div class="extra-info">
       <h4><span><span></h4>
@@ -94,10 +123,33 @@ function User_LogoutAction()
 {
     Prom_UserLogout(localStorage.getItem("username"), localStorage.getItem("token"));
     localStorage.setItem("token", "");
+    User_LoadUser();
+}
+
+function User_RegisterAttempt()
+{
+    Utils_ShowExtraInfo();
+    document.querySelector('.extra-info span').innerHTML = "Loading";
+
+    const username = document.getElementsByName('username')[0].value;
+    const password = document.getElementsByName('password')[0].value;
+    const repeatpassword = document.getElementsByName('repeatpassword')[0].value;
+
+    if (password != repeatpassword) {
+        document.querySelector('.extra-info span').innerHTML = "Error: Passwords are not the same";
+        return ;
+    }
+    Prom_UserCreate(username, password)
+    .then(res => {
+        document.querySelector('.extra-info span').innerHTML = "Account created! You can now login";
+    })
+    .catch(err => {
+        document.querySelector('.extra-info span').innerHTML = "Error: " + err.reason;
+    })
 }
 
 function User_RegisterAction()
 {
     Utils_ClearMain();
-    Rend_Register();
+    document.getElementById("main").innerHTML = RegisterHTML;
 }

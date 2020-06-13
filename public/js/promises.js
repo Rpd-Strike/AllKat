@@ -60,14 +60,15 @@ async function Prom_DeleteSingleCat(catId, token)
     return wrapperPromise(promise_getter);
 }
 
-async function Prom_UpdateSingleCat(cat)
+async function Prom_UpdateSingleCat(catID, token, cat)
 {
-    const promise_getter = () => fetch("cats/" + cat.id, {
+    const promise_getter = () => fetch("api/cat/" + catID, {
         method : "PUT",
         headers : {
             "Content-type": "application/json"
         },
-        body : JSON.stringify(cat)
+        body : JSON.stringify({token: token,
+                               cat: cat})
     });
     return wrapperPromise(promise_getter);
 }
@@ -128,6 +129,20 @@ function Prom_UserLogout(username, token)
         },
         body : JSON.stringify({username: username,
                                token: token})
+    });
+    return wrapperPromise(promise_getter);
+}
+
+function Prom_UserCreate(username, password)
+{
+    console.log("Create user promise:");
+    const promise_getter = () => fetch('api/user/create', {
+        method : "POST",
+        headers : {
+            "Content-type": "application/json"
+        },
+        body : JSON.stringify({username: username,
+                               password: password})
     });
     return wrapperPromise(promise_getter);
 }

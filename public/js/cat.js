@@ -26,9 +26,7 @@ CatHTML = `
     <label>Email</label>
     <input type="email" class="input" name="email" placeholder="None - Email">
     <label>Image link</label>
-    <input type="text" class="input" name="image" placeholder="None - URL of your cat's photo">
-    <label>Access token</label>
-    <input type="text" class="input" name="token" placeholder="None - Access token here">      
+    <input type="text" class="input" name="image" placeholder="None - URL of your cat's photo">   
     </fieldset>
     <input class="input" type="button" value="Update information" onclick="Cat_UpdateCatClick()" />
     <input class="input" type="button" value="Delete" onclick="Cat_DeleteCatClick()" />
@@ -56,21 +54,21 @@ function CAT_HideExtraInfo()
 
 function Cat_UpdateCatClick()
 {
-    cat = {};
-    catid = document.getElementsByName('id')[0].value;
-    token = document.getElementsByName('token')[0].value;
-    ["id", "availability", "name", "race", "gender", "city", "favorite_toy", "full_address", "email", "image", "token"].forEach(prop => {
+    let cat = {};
+    const token = localStorage.getItem("token");
+    ["id", "name", "availability", "race", "gender", "city", "favorite_toy", "full_address", "email", "image"].forEach(prop => {
         cat[prop] = document.getElementsByName(prop)[0].value;
     });
     console.log("trying to update: ");
     console.log(cat);
-    Prom_UpdateSingleCat(cat).then(res => {
-        if (res.status == "valid") {
-            document.querySelector('h4>span').innerHTML = "Updated your cat!";
-        }
-        else {
-            document.querySelector('h4>span').innerHTML = "Wrong access token or bad request";
-        }
+    Prom_UpdateSingleCat(cat.id, token, cat)
+    .then(res => {
+        document.querySelector('h4>span').innerHTML = "Updated your cat!";
+    })
+    .catch(err => {
+        document.querySelector('h4>span').innerHTML = "Error: " + err.reason;
+    })
+    .finally(() => {
         CAT_ShowExtraInfo();
     });
 }
@@ -117,7 +115,7 @@ function Cat_showCat(catId)
     Prom_GetSingleCat(catId).then(res => {
         cat = res.data;
         console.log("I got this cat to view: ");
-        console.log(cat);
-        Cat_PopulateForm(cat);
+        console.log(cat.cat);
+        Cat_PopulateForm(cat.cat);
     });
 }

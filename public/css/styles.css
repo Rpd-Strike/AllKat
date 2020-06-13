@@ -313,6 +313,18 @@ html {
     color: rgb(44, 112, 59);
 }
 
+.form-style legend {
+    width: 100%;
+}
+
+.form-title {
+    float: right;
+}
+
+.info-message {
+    text-align: center;
+}
+
 .extra-info {
     display: none;
     justify-content: space-between;
