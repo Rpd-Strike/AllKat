@@ -1,0 +1,46 @@
+<div class="form-wrapper">
+<div class="form-style">
+    <form>
+    <fieldset>
+    <legend>
+        <i class="fas fa-info-circle"></i> 
+        More information about <span></span>
+    </legend>
+
+    <input type="hidden" name="id" value="">
+    <label>Name</label>
+    <input type="text" class="input" name="name" placeholder="None - Cat's name">
+    <label>Race</label>
+    <input type="text" class="input" name="race" placeholder="None - Race of your cat">
+    <label>Gender</label>
+    <input type="text" class="input" name="gender" placeholder="None - Gender">
+    <label>City</label>
+    <input type="text" class="input" name="city" placeholder="None - City">
+    <label for="availability">Availability:</label>
+
+    <select name="availability">
+        <option value="free">Available</option>
+        <option value="talk">Negotiating</option>
+        <option value="taken">Taken</option>
+    </select>
+    
+    <label>About your cat</label>
+    <textarea name="favorite_toy" placeholder="None - Favorite toy..."></textarea>
+    <label>Address</label>
+    <input type="text" class="input" name="full_address" placeholder="None - Where is your cat?">
+    <label>Email</label>
+    <input type="email" class="input" name="email" placeholder="None - Email">
+    <label>Image link</label>
+    <input type="text" class="input" name="image" placeholder="None - URL of your cat's photo">   
+    </fieldset>
+    <input class="input" type="button" value="Update information" onclick="Cat_UpdateCatClick()" />
+    <input class="input" type="button" value="Delete" onclick="Cat_DeleteCatClick()" />
+
+    <div class="extra-info">
+        <h4><span><span></h4>
+        <i class="fas fa-times" onclick="CAT_HideExtraInfo()"></i>
+    </div>
+
+    </form>
+    </div>
+</div>

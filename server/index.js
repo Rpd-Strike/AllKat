@@ -274,6 +274,7 @@ app.post("/api/cat/create", (req, res) => {
   if (checkObj.user.toLowerCase() == "guest")
     return res.send(badRequest("Guest can not create cats"));
   // console.log("Token valid");
+  checkObj.user = database.readUsers()[checkObj.user.toLowerCase()];
   
   /// generate new cat id
   let catList = database.readCats();
@@ -430,6 +431,23 @@ app.get("/api/cat/user_all/:token", (req, res) => {
 
   res.send(validRequest({info: "List with all the cats user has access to",
                          cat_list: responseCatList}));
+});
+
+/// Add One view to cat
+app.put("/api/cat/view/:catId", (req, res) => {
+  const data = addIpToData(req.body, req);
+  const catId = req.params.catId;
+
+  let catList = database.readCats();
+  if (!catList.hasOwnProperty(catId))
+    return res.send(badRequest("Cat Token non-existent"));
+  
+  catList[catId].nr_viz += 1;
+  LogCRUD.addView(catList[catId], data.ip);
+  database.writeCats(catList);
+
+  res.send(validRequest({info: "Added view",
+                         catId: catId}));
 });
 
 // creeam database

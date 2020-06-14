@@ -124,6 +124,7 @@ function User_LogoutAction()
     Prom_UserLogout(localStorage.getItem("username"), localStorage.getItem("token"));
     localStorage.setItem("token", "");
     User_LoadUser();
+    Home_showHome();
 }
 
 function User_RegisterAttempt()

@@ -69,5 +69,11 @@ module.exports = {
     {
         let message = HEADER + `CatAPI | Requeste all cats for user: ${username} from IP: ${data.ip}, number of cats: ${lungime}`;
         console.log(message);
+    },
+
+    addView: function(cat, ip)
+    {
+        let message = HEADER + `CatAPI | AddView from IP: ${ip} to cat: ${cat.id}`;
+        console.log(message);
     }
 }

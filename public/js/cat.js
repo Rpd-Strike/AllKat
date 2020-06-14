@@ -1,44 +1,8 @@
-CatHTML = `
-<div class="form-wrapper">
-<div class="form-style">
-    <form>
-    <fieldset>
-    <legend><i class="fas fa-info-circle"></i> More information about <span></span></legend>
-    <input type="hidden" name="id" value="">
-    <label>Name</label>
-    <input type="text" class="input" name="name" placeholder="None - Cat's name">
-    <label>Race</label>
-    <input type="text" class="input" name="race" placeholder="None - Race of your cat">
-    <label>Gender</label>
-    <input type="text" class="input" name="gender" placeholder="None - Gender">
-    <label>City</label>
-    <input type="text" class="input" name="city" placeholder="None - City">
-    <label for="availability">Availability:</label>
-<select name="availability">
-  <option value="free">Available</option>
-  <option value="talk">Negotiating</option>
-  <option value="taken">Taken</option>
-</select>
-    <label>About your cat</label>
-    <textarea name="favorite_toy" placeholder="None - Favorite toy..."></textarea>
-    <label>Address</label>
-    <input type="text" class="input" name="full_address" placeholder="None - Where is your cat?">
-    <label>Email</label>
-    <input type="email" class="input" name="email" placeholder="None - Email">
-    <label>Image link</label>
-    <input type="text" class="input" name="image" placeholder="None - URL of your cat's photo">   
-    </fieldset>
-    <input class="input" type="button" value="Update information" onclick="Cat_UpdateCatClick()" />
-    <input class="input" type="button" value="Delete" onclick="Cat_DeleteCatClick()" />
+let CatHTML = `Loading`;
+let ViewHTML = `Loading`;
 
-    <div class="extra-info">
-      <h4><span><span></h4>
-      <i class="fas fa-times" onclick="CAT_HideExtraInfo()"></i>
-    </div>
-
-    </form>
-    </div>
-</div>`;
+Prom_UtilGetHTML("edit_cat.html").then(res => {CatHTML = res});
+Prom_UtilGetHTML("view_cat.html").then(res => {ViewHTML = res});
 
 function CAT_ShowExtraInfo()
 {
@@ -75,20 +39,15 @@ function Cat_UpdateCatClick()
 
 function Cat_DeleteCatClick()
 {
-    catid = document.getElementsByName('id')[0].value;
-    token = document.getElementsByName('token')[0].value;
-    Prom_DeleteSingleCat(catid, localStorage.getItem("token")).then(res => {
-        console.log("response from server: ");
-        console.log(res);
-        if (res.status == "valid") {
-            Adopt_showAdopt();
-        } else {
-            if (res.status != "valid") {
-                document.querySelector('h4>span').innerHTML = "Wrong access token or bad request";
-            }
-            CAT_ShowExtraInfo();
-        }
-    });
+    const catid = document.getElementsByName('id')[0].value;
+    Prom_DeleteSingleCat(catid, localStorage.getItem("token"))
+    .then(res => {
+        Adopt_showAdopt();
+    })
+    .catch(err => {
+        document.querySelector('h4>span').innerHTML = "Wrong access token or bad request";
+        CAT_ShowExtraInfo();
+    })
 }
 
 function Cat_PopulateForm(cat)
@@ -105,7 +64,23 @@ function Cat_PopulateForm(cat)
     document.getElementsByName('availability')[0].value = cat.availability;
 }
 
-function Cat_showCat(catId)
+function Cat_PopulateViewPage(cat, newsrc)
+{
+    console.log(cat);
+    document.querySelector('.vcg-img').setAttribute('src', newsrc);
+    document.querySelector('.vcg-name').textContent = cat.name;
+    document.querySelector('.vcg-race').textContent = cat.race;
+    document.querySelector('.vcg-gender').textContent = cat.gender;
+    document.querySelector('.vcg-city').textContent = cat.city;
+    document.querySelector('.vcg-availability .cat-ava-').className += cat.availability;
+    document.querySelector('.vcg-fav-toy').textContent = cat.favorite_toy;
+    document.querySelector('.vcg-address').textContent = cat.full_address;
+    document.querySelector('.vcg-email').textContent = cat.email;
+    document.querySelector('.vcg-user').textContent = cat.user;
+    document.querySelector('.vcg-views').textContent = cat.nr_viz;
+}
+
+function Cat_showEditCat(catId)
 {
     mainEl = document.getElementById("main")
     mainEl.innerHTML = CatHTML;
@@ -118,4 +93,19 @@ function Cat_showCat(catId)
         console.log(cat.cat);
         Cat_PopulateForm(cat.cat);
     });
+}
+
+function Cat_showViewCat(catId, newsrc)
+{
+    mainEl = document.getElementById("main")
+    mainEl.innerHTML = ViewHTML;
+
+    Prom_AddViewCount(catId);
+
+    Prom_GetSingleCat(catId)
+    .then(res => {
+        const cat = res.data.cat;
+        console.log(`I am showing this cat (id: ${cat.id})`);
+        Cat_PopulateViewPage(cat, newsrc);
+    })
 }

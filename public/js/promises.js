@@ -101,9 +101,22 @@ async function Prom_TestToken(token)
     return wrapperPromise(promise_getter);
 }
 
+async function Prom_AddViewCount(catId)
+{
+    console.log("Adding one view to cat: " + catId);
+
+    const promise_getter = () => fetch('api/cat/view/' + catId, {
+        method : "PUT",
+        headers : {
+            "Content-type": "application/json"
+        }
+    });
+    return wrapperPromise(promise_getter);
+}
+
 /// ===== User =======
 
-function Prom_UserLogin(username, password)
+async function Prom_UserLogin(username, password)
 {
     console.log("Login promise:");
     console.log(username);
@@ -119,7 +132,7 @@ function Prom_UserLogin(username, password)
     return wrapperPromise(promise_getter);
 }
 
-function Prom_UserLogout(username, token)
+async function Prom_UserLogout(username, token)
 {
     console.log("Logout promise:");
     const promise_getter = () => fetch('api/user/logout', {
@@ -133,7 +146,7 @@ function Prom_UserLogout(username, token)
     return wrapperPromise(promise_getter);
 }
 
-function Prom_UserCreate(username, password)
+async function Prom_UserCreate(username, password)
 {
     console.log("Create user promise:");
     const promise_getter = () => fetch('api/user/create', {
@@ -145,4 +158,22 @@ function Prom_UserCreate(username, password)
                                password: password})
     });
     return wrapperPromise(promise_getter);
+}
+
+async function Prom_UtilGetHTML(filepath)
+{
+    console.log("Promise for html: " + filepath);
+    return new Promise(function(resolve, reject) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET", filepath, true);
+        xmlhttp.onload = function () {
+            var status = xmlhttp.status;
+            if (status == 200) {
+                resolve(xmlhttp.responseText);
+            } else {
+                reject("Bad Get HTML Request");
+            }
+        };
+        xmlhttp.send();
+    });
 }
