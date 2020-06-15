@@ -1,25 +1,24 @@
-function showAdopt()
+function Adopt_showAdopt()
 {
-    mainEl = document.getElementById("main")
-    mainEl.innerHTML = ``;
-    // mainEl.classList.add("view-cat");
+    Utils_ClearMain();
 
     /// Maybe time this operation for Final Project
 
     Prom_GetAllCats().then(resp => {
+        const allCats = resp.data.cat_list;
         console.log("Show Adopt: Received cats from Server: ");
-        console.log(resp);
-        renderAllCats(resp);
+        console.log(allCats);
+        Adopt_renderAllCats(allCats);
 
-        if (Object.keys(resp).length < 1) {
-            renderEmptyMsg();
+        if (Object.keys(allCats).length < 1) {
+            Adopt_renderEmptyMsg();
         }
     });
 }
 
-function renderEmptyMsg()
+function Adopt_renderEmptyMsg()
 {
-    DeleteAllWithClass("cats-flexbox");
+    Utils_DeleteAllWithClass("cats-flexbox");
     catsEl = document.createElement("div");
     catsEl.classList.add("cats-flexbox");
 
@@ -33,22 +32,36 @@ function renderEmptyMsg()
     document.getElementById("main").appendChild(catsEl);
 }
 
-function renderCat(fatherNode, cat)
+function Adopt_renderCat(fatherNode, cat)
 {
-    // console.log("Render Cat: ", cat);
-
     /// interpretare a template engine in browser. IMPORTANT
+    const viewsComp = `
+    <span class="cat-nr-views">
+        <i class="far fa-eye"></i>
+        <span>${cat.nr_viz}</span>
+    </span>
+    `;
 
-    html = `
-        <img src="${cat.image}">
-        <button class="btn-cat-info" onclick="OnClickCat('${cat.id}')">
-          <i class="fas fa-info-circle"></i>
-          More
-        </button>
+    const buttonHTML = `
+    <button class="btn-cat-info" onclick="Adopt_OnClickCat('${cat.id}')">
+        <i class="fas fa-edit"></i>
+        Edit
+    </button>
+    `;
+
+    const html = `
+        <a class="darken">
+            <img class="actual" src="${cat.image}" 
+                 onerror="console.log('Error loading cat image');this.onerror=null;this.src='/img/missing-cat-2.jpg';"
+                 onclick="Adopt_showCat('${cat.id}', this.src)">
+        </a>
         <div class="card-availability card-status-${cat.availability}">
+          ${viewsComp}
           <div></div>
-          <span>Availability</span>
         </div>
+        ${cat.user.toLowerCase() == localStorage.getItem("username").toLowerCase() ? 
+          buttonHTML : (localStorage.getItem("username").toLowerCase() == "admin" ? buttonHTML : "")
+        }
         <p class="card-name"><span>Name:</span> ${cat.name}</p>
         <p class="card-race"><span>Race:</span> ${cat.race}</p>
         <p class="card-gender"><span>Gender:</span> ${cat.gender}</p>
@@ -62,21 +75,27 @@ function renderCat(fatherNode, cat)
     fatherNode.appendChild(catEl);
 }
 
-function renderAllCats(allCats)
+function Adopt_showCat(catId, newsrc)
 {
-    DeleteAllWithClass("cats-flexbox");
+    // console.log(newsrc);
+    Cat_showViewCat(catId, newsrc);
+}
+
+function Adopt_renderAllCats(allCats)
+{
+    Utils_DeleteAllWithClass("cats-flexbox");
     catsEl = document.createElement("div");
     catsEl.classList.add("cats-flexbox");
     
     Object.keys(allCats).forEach(id => {
         console.log("before render id: " + id);
-        renderCat(catsEl, allCats[id]);
+        Adopt_renderCat(catsEl, allCats[id]);
     });
 
     document.getElementById("main").appendChild(catsEl);
 }
 
-function OnClickCat(catId)
+function Adopt_OnClickCat(catId)
 {
-    showCat(catId);
+    Cat_showEditCat(catId);
 }

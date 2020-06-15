@@ -88,5 +88,11 @@ module.exports = {
     {
         let message = HEADER + `AdminAPI | Reset password for user: ${data.user} from IP: ${data.ip}`;
         console.log(message);
+    },
+
+    addView: function(cat, ip)
+    {
+        let message = HEADER + `CatAPI | AddView from IP: ${ip} to cat: ${cat.id}`;
+        console.log(message);
     }
 }

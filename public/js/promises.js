@@ -28,7 +28,7 @@ function wrapperPromise(fetch_getter)
 
 async function Prom_GetSingleCat(catId)
 {
-    const promise_getter = () => fetch("cats/" + catId, {
+    const promise_getter = () => fetch("api/cat/single/" + catId, {
         method : "GET",
         headers : {
             "Content-type": "application/json"
@@ -39,7 +39,7 @@ async function Prom_GetSingleCat(catId)
 
 async function Prom_GetAllCats()
 {
-    const promise_getter = () => fetch("cats", { 
+    const promise_getter = () => fetch("api/cat/all", { 
         method : "GET",
         headers : {
             "Content-type": "application/json"
@@ -50,7 +50,7 @@ async function Prom_GetAllCats()
 
 async function Prom_DeleteSingleCat(catId, token)
 {
-    const promise_getter = () => fetch("cats/" + catId, {
+    const promise_getter = () => fetch("api/cat/single/delete", {
         method : "DELETE",
         headers : {
             "Content-type": "application/json"
@@ -60,14 +60,15 @@ async function Prom_DeleteSingleCat(catId, token)
     return wrapperPromise(promise_getter);
 }
 
-async function Prom_UpdateSingleCat(cat)
+async function Prom_UpdateSingleCat(catID, token, cat)
 {
-    const promise_getter = () => fetch("cats/" + cat.id, {
+    const promise_getter = () => fetch("api/cat/" + catID, {
         method : "PUT",
         headers : {
             "Content-type": "application/json"
         },
-        body : JSON.stringify(cat)
+        body : JSON.stringify({token: token,
+                               cat: cat})
     });
     return wrapperPromise(promise_getter);
 }
@@ -91,12 +92,88 @@ async function Prom_TestToken(token)
 {
     console.log("Testing token: " + token);
 
-    const promise_getter = () => fetch('user/test_token', {
+    const promise_getter = () => fetch('api/user/test_token/' + token, {
         method : "GET",
         headers : {
             "Content-type": "application/json"
-        },
-        body : JSON.stringify({token: token})
+        }
     });
     return wrapperPromise(promise_getter);
+}
+
+async function Prom_AddViewCount(catId)
+{
+    console.log("Adding one view to cat: " + catId);
+
+    const promise_getter = () => fetch('api/cat/view/' + catId, {
+        method : "PUT",
+        headers : {
+            "Content-type": "application/json"
+        }
+    });
+    return wrapperPromise(promise_getter);
+}
+
+/// ===== User =======
+
+async function Prom_UserLogin(username, password)
+{
+    console.log("Login promise:");
+    console.log(username);
+    console.log(password);
+    const promise_getter = () => fetch('api/user/login', {
+        method: "PUT",
+        headers : {
+            "Content-type": "application/json"
+        },
+        body : JSON.stringify({username: username,
+                               password: password})
+    });
+    return wrapperPromise(promise_getter);
+}
+
+async function Prom_UserLogout(username, token)
+{
+    console.log("Logout promise:");
+    const promise_getter = () => fetch('api/user/logout', {
+        method: "DELETE",
+        headers : {
+            "Content-type": "application/json"
+        },
+        body : JSON.stringify({username: username,
+                               token: token})
+    });
+    return wrapperPromise(promise_getter);
+}
+
+async function Prom_UserCreate(username, password)
+{
+    console.log("Create user promise:");
+    const promise_getter = () => fetch('api/user/create', {
+        method : "POST",
+        headers : {
+            "Content-type": "application/json"
+        },
+        body : JSON.stringify({username: username,
+                               password: password})
+    });
+    return wrapperPromise(promise_getter);
+}
+
+async function Prom_UtilGetHTML(filepath)
+{
+    console.log("Promise for html: " + filepath);
+    return new Promise(function(resolve, reject) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET", "templates/" + filepath, true);
+        xmlhttp.onload = function () {
+            var status = xmlhttp.status;
+            if (status == 200) {
+                resolve(xmlhttp.responseText);
+            } else {
+                reject("Bad Get HTML Request");
+            }
+        };
+        xmlhttp.send();
+    });
 }

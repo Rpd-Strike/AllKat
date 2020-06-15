@@ -10,7 +10,7 @@ function readJSONFile(filename) {
 function writeJSONFile(content, filename) {
   fs.writeFileSync(
     filename,
-    JSON.stringify(content),
+    JSON.stringify(content, null, 2),
     "utf8",
     err => {
       if (err) {

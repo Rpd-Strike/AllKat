@@ -1,0 +1,358 @@
+/* Edit Cat */
+
+.cats-flexbox
+{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(auto-fill, 1fr);
+    align-items: center;
+    justify-items: center;
+}
+
+.cat-card:not(:empty)
+{
+    display: grid;
+    grid-template-rows: repeat(6, auto);
+    grid-template-columns: auto 20px 1fr;
+
+    padding: 0.6rem;
+    margin: 1rem;
+    margin-bottom: 2rem;
+
+    background-color: rgba(88, 164, 226, 0.288);
+    border-radius: 25px;
+
+    filter: drop-shadow(0 0 0.75rem rgba(157, 33, 240, 0.582));
+
+    max-height: 300px;
+}
+
+.cat-card img
+{
+    object-fit: cover;
+    border-radius: 25px;
+}
+
+.cat-card a
+{
+    grid-column: 1;
+    grid-row: 1 / 7;
+}
+
+.cat-card > p
+{
+    font-size: 17px;
+    padding: 0.2rem;
+    margin: 0px;
+}
+
+.cat-card > p > span
+{
+    font-weight: bold;
+}
+
+.btn-cat-info
+{
+    grid-column: 3;
+    grid-row: 6;
+
+    padding: 0px;
+    border: 0px;
+    border-radius: 5px;
+    margin-top: 10px;
+    
+    height: 2rem;
+    transition: all 0.5s ease;
+    font-size: 0.9rem;
+}
+
+.btn-cat-info:hover
+{
+    background-color: aqua;
+    cursor: pointer;
+}
+
+.cat-nr-views
+{
+    display: inline-block;
+    margin-left: 0.3rem;
+}
+
+.cat-nr-views span 
+{
+    font-size: 18px;
+}
+
+.cat-nr-views .fa-eye
+{
+    font-size: 17px;
+    margin-right: 0.1rem;;
+    /* vertical-align: middle; */
+}
+
+.card-availability
+{
+    grid-column: 3;
+    grid-row: 1;
+    font-size: 16px;
+    padding-top: 0.2rem;
+    max-width: 100%;
+}
+
+.card-name
+{
+    grid-column: 3;
+    grid-row: 2;
+}
+
+.card-race
+{
+    grid-column: 3;
+    grid-row: 3;
+}
+
+.card-gender
+{
+    grid-column: 3;
+    grid-row: 4;
+}
+
+.card-fav
+{
+    grid-column: 3;
+    grid-row: 5;
+}
+
+.cat-card  img {
+    width: 210px;
+    max-height: min(210px, 100%)
+}
+
+
+/* View Cat Grid elements */
+.view-cat-grid {
+    padding: 1.5em;
+
+    display: grid;
+    grid-template-columns: fit-content(100%), auto, fit-content(100%), auto, auto;
+    grid-template-rows: repeat(12, auto);
+    grid-template-areas: "img img views views ."
+                         "img img name-i name name"
+                         "img img race-i race race"
+                         "img img gender-i gender gender"
+                         "img img city-i city city"
+                         "more-info more-info more-info . ."
+                         "status-i status status status status"
+                         "fav-toy-i fav-toy fav-toy fav-toy fav-toy"
+                         "email-i email email email email"
+                         "ful-add-i ful-add ful-add ful-add ful-add"
+                         "user-i user user user user"
+                         "btn btn . . ."
+}
+
+.vcg-btn {
+    grid-area: btn;
+    margin: 0.6em;
+}
+
+.view-cat-grid p,
+.vcg-availability {
+    margin: 0.6em;
+}
+
+.vcg-img {
+    grid-area: img;    
+}
+
+.vcg-img img {
+    border-radius: 30px;
+}
+
+.vcg-name {
+    grid-area: name;
+}
+
+.vcg-race {
+    grid-area: race;
+}
+
+.vcg-gender {
+    grid-area: gender;
+}
+
+.vcg-city {
+    grid-area: city;
+}
+
+.vcg-availability {
+    grid-area: status;
+}
+
+.vcg-fav-toy {
+    grid-area: fav-toy;
+}
+
+.vcg-address {
+    grid-area: ful-add;
+}
+
+.vcg-email {
+    grid-area: email;
+}
+
+.vcg-user {
+    grid-area: user;
+}
+
+.vcg-views {
+    grid-area: views;
+    margin: 0.6em;
+}
+
+/* More information elements  */
+.vcg-more-info {
+    grid-area: more-info
+}
+
+.vcg-status-info {
+    grid-area: status-i;
+}
+
+.vcg-fav-toy-info {
+    grid-area: fav-toy-i;
+}
+
+.vcg-email-info {
+    grid-area: email-i;
+}
+
+.vcg-full-address-info {
+    grid-area: ful-add-i;
+}
+
+.vcg-user-info {
+    grid-area: user-i;
+    padding-right: 0.5em;
+}
+
+.vcg-name-info {
+    grid-area: name-i;
+}
+
+.vcg-race-info {
+    grid-area: race-i;
+}
+
+.vcg-gender-info {
+    grid-area: gender-i;
+}
+
+.vcg-city-info {
+    grid-area: city-i;
+}
+
+/* Availability css */
+
+.cat-ava {
+    border-radius: 10px;
+    width: 19px;
+    height: 19px;
+}
+
+.cat-ava-free {
+    background-color: #1fe31f;
+}
+
+.cat-ava-taken {
+    background-color: #fb1515;
+}
+
+.cat-ava-talk {
+    background-color: purple;
+}
+
+[class$="-info"] {
+    font-weight: bold;
+}
+
+.btn-view-page
+{
+    grid-column: 3;
+    grid-row: 6;
+
+    border: 0px;
+    border-radius: 5px;
+    
+    height: 2.2rem;
+    transition: all 0.5s ease;
+    font-size: 0.9rem;
+
+    background-color: rgb(212, 212, 212);
+}
+
+.btn-view-page:hover
+{
+    background-color: aqua;
+    cursor: pointer;
+}
+
+/* Tablet mode */
+@media screen and (min-width:768px) and (max-width: 1280px) {
+    .view-cat-grid {
+        padding: 1.5em;
+    
+        display: grid;
+        grid-template-columns: fit-content(100%), auto;
+        grid-template-rows: repeat(13, auto);
+        grid-template-areas: "img img"
+                             "views views"
+                             "name-i name"
+                             "race-i race"
+                             "gender-i gender"
+                             "city-i city"
+                             "more-info more-info"
+                             "status-i status"
+                             "fav-toy-i fav-toy"
+                             "email-i email"
+                             "ful-add-i ful-add"
+                             "user-i user"
+                             "btn btn"
+
+    }
+
+    .vcg-img img {
+        max-width: 300px;
+        max-height: min(300px, 100%);
+    }    
+}
+    
+    /* Phone mode */
+@media screen and (max-width: 767px){
+    .view-cat-grid {
+        padding: 1.5em;
+    
+        display: grid;
+        grid-template-columns: fit-content(100%), auto;
+        grid-template-rows: repeat(13, auto);
+        grid-template-areas: "img img"
+                             "views views"
+                             "name-i name"
+                             "race-i race"
+                             "gender-i gender"
+                             "city-i city"
+                             "more-info more-info"
+                             "status-i status"
+                             "fav-toy-i fav-toy"
+                             "email-i email"
+                             "ful-add-i ful-add"
+                             "user-i user"
+                             "btn btn"
+
+    }
+
+    .vcg-img img {
+        max-width: 220px;
+        max-height: min(300px, 100%);
+    }   
+
+}

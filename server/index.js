@@ -113,7 +113,7 @@ app.post("/api/user/create", (req, res) => {
     blocked: false,
     time_logged: JSON.stringify(new Date(1980, 1, 1))
   }
-  userList[userObj.username] = userObj;
+  userList[userObj.username.toLowerCase()] = userObj;
   database.writeUsers(userList);
 
   /// Log information and send back to the client data
@@ -173,7 +173,8 @@ app.put("/api/user/login", (req, res) => {
   /// Log info and send back request
   LogCRUD.successfullLogin(newObjectUser, data.ip);
   res.send(validRequest({info: "Logged in and generated token is: " + newToken,
-                         token: newToken}));
+                         token: newToken,
+                         user: userList[data.username].username}));
 });
 
 
@@ -194,7 +195,7 @@ app.delete("/api/user/logout", (req, res) => {
     return true;
   }
 
-  data.username = String(data.username);
+  data.username = String(data.username).toLowerCase();
   data.token = String(data.token);
   if (!validUserAndToken(data.username, data.token)) {
     return res.send(badRequest("Username and Token mismatch or invalid"));
@@ -246,8 +247,9 @@ app.get("/api/user/test_token/:token", (req, res) => {
   const tokenList = database.readTokens();
   LogCRUD.testToken(data.token);
   if (tokenList.hasOwnProperty(data.token)) {
-    let sentUser = database.readUsers()[tokenList[data.token].username];
+    let sentUser = database.readUsers()[tokenList[data.token].username.toLowerCase()];
     delete sentUser.password;
+    // console.log("OK TOKEN");
     return res.send(validRequest({info: "user data",
                                   user_data: sentUser}));
   }
@@ -372,6 +374,7 @@ app.post("/api/cat/create", (req, res) => {
   if (checkObj.user.toLowerCase() == "guest")
     return res.send(badRequest("Guest can not create cats"));
   // console.log("Token valid");
+  checkObj.user = database.readUsers()[checkObj.user.toLowerCase()];
   
   /// generate new cat id
   let catList = database.readCats();
@@ -384,6 +387,7 @@ app.post("/api/cat/create", (req, res) => {
   let catData = data.cat;
   catData.user = checkObj.user;
   catData.nr_viz = 0;
+  catData.availability = "free";
  
   /// add token and write to db
   catData.id = catToken;
@@ -465,7 +469,7 @@ app.put("/api/cat/:id", (req, res) => {
   catsList[data.cat.id] = data.cat;
   database.writeCats(catsList);
   
-  LogCRUD.updatedCat(data);  
+  LogCRUD.updatedCat(data);  //// TODO add username here
   res.send(validRequest({info: "Updated cat",
                                 cat: data.cat}));
 });
@@ -527,6 +531,23 @@ app.get("/api/cat/user_all/:token", (req, res) => {
 
   res.send(validRequest({info: "List with all the cats user has access to",
                          cat_list: responseCatList}));
+});
+
+/// Add One view to cat
+app.put("/api/cat/view/:catId", (req, res) => {
+  const data = addIpToData(req.body, req);
+  const catId = req.params.catId;
+
+  let catList = database.readCats();
+  if (!catList.hasOwnProperty(catId))
+    return res.send(badRequest("Cat Token non-existent"));
+  
+  catList[catId].nr_viz += 1;
+  LogCRUD.addView(catList[catId], data.ip);
+  database.writeCats(catList);
+
+  res.send(validRequest({info: "Added view",
+                         catId: catId}));
 });
 
 // creeam database
