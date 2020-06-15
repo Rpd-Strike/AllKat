@@ -165,7 +165,7 @@ async function Prom_UtilGetHTML(filepath)
     console.log("Promise for html: " + filepath);
     return new Promise(function(resolve, reject) {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", filepath, true);
+        xmlhttp.open("GET", "templates/" + filepath, true);
         xmlhttp.onload = function () {
             var status = xmlhttp.status;
             if (status == 200) {
