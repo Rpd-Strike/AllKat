@@ -125,7 +125,7 @@
 
 .cat-card  img {
     width: 210px;
-    height: 100%;
+    max-height: min(210px, 100%)
 }
 
 
@@ -135,7 +135,7 @@
 
     display: grid;
     grid-template-columns: fit-content(100%), auto, fit-content(100%), auto, auto;
-    grid-template-rows: repeat(11, auto);
+    grid-template-rows: repeat(12, auto);
     grid-template-areas: "img img views views ."
                          "img img name-i name name"
                          "img img race-i race race"
@@ -147,6 +147,12 @@
                          "email-i email email email email"
                          "ful-add-i ful-add ful-add ful-add ful-add"
                          "user-i user user user user"
+                         "btn btn . . ."
+}
+
+.vcg-btn {
+    grid-area: btn;
+    margin: 0.6em;
 }
 
 .view-cat-grid p,
@@ -155,7 +161,11 @@
 }
 
 .vcg-img {
-    grid-area: img;
+    grid-area: img;    
+}
+
+.vcg-img img {
+    border-radius: 30px;
 }
 
 .vcg-name {
@@ -196,6 +206,7 @@
 
 .vcg-views {
     grid-area: views;
+    margin: 0.6em;
 }
 
 /* More information elements  */
@@ -262,4 +273,86 @@
 
 [class$="-info"] {
     font-weight: bold;
+}
+
+.btn-view-page
+{
+    grid-column: 3;
+    grid-row: 6;
+
+    border: 0px;
+    border-radius: 5px;
+    
+    height: 2.2rem;
+    transition: all 0.5s ease;
+    font-size: 0.9rem;
+
+    background-color: rgb(212, 212, 212);
+}
+
+.btn-view-page:hover
+{
+    background-color: aqua;
+    cursor: pointer;
+}
+
+/* Tablet mode */
+@media screen and (min-width:768px) and (max-width: 1280px) {
+    .view-cat-grid {
+        padding: 1.5em;
+    
+        display: grid;
+        grid-template-columns: fit-content(100%), auto;
+        grid-template-rows: repeat(13, auto);
+        grid-template-areas: "img img"
+                             "views views"
+                             "name-i name"
+                             "race-i race"
+                             "gender-i gender"
+                             "city-i city"
+                             "more-info more-info"
+                             "status-i status"
+                             "fav-toy-i fav-toy"
+                             "email-i email"
+                             "ful-add-i ful-add"
+                             "user-i user"
+                             "btn btn"
+
+    }
+
+    .vcg-img img {
+        max-width: 300px;
+        max-height: min(300px, 100%);
+    }    
+}
+    
+    /* Phone mode */
+@media screen and (max-width: 767px){
+    .view-cat-grid {
+        padding: 1.5em;
+    
+        display: grid;
+        grid-template-columns: fit-content(100%), auto;
+        grid-template-rows: repeat(13, auto);
+        grid-template-areas: "img img"
+                             "views views"
+                             "name-i name"
+                             "race-i race"
+                             "gender-i gender"
+                             "city-i city"
+                             "more-info more-info"
+                             "status-i status"
+                             "fav-toy-i fav-toy"
+                             "email-i email"
+                             "ful-add-i ful-add"
+                             "user-i user"
+                             "btn btn"
+
+    }
+
+    .vcg-img img {
+        max-width: 220px;
+        max-height: min(300px, 100%);
+    }   
+
 }

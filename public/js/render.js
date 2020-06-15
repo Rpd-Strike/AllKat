@@ -27,6 +27,10 @@ function Rend_CreateNav()
 
     navbar.appendChild(rescue);
 
+    let userElements = document.createElement('div');
+    userElements.setAttribute('class', 'nav-user-info');
+    navbar.appendChild(userElements);
+
     document.getElementById("allkat-app").appendChild(navbar);   
 }
 

@@ -66,8 +66,15 @@ function Cat_PopulateForm(cat)
 
 function Cat_PopulateViewPage(cat, newsrc)
 {
+    const buttonHTML = `
+    <button class="btn-view-page" onclick="Adopt_OnClickCat('${cat.id}')">
+        <i class="fas fa-edit"></i>
+        Edit
+    </button>
+    `;
+
     console.log(cat);
-    document.querySelector('.vcg-img').setAttribute('src', newsrc);
+    document.querySelector('.vcg-img img').setAttribute('src', newsrc);
     document.querySelector('.vcg-name').textContent = cat.name;
     document.querySelector('.vcg-race').textContent = cat.race;
     document.querySelector('.vcg-gender').textContent = cat.gender;
@@ -77,7 +84,11 @@ function Cat_PopulateViewPage(cat, newsrc)
     document.querySelector('.vcg-address').textContent = cat.full_address;
     document.querySelector('.vcg-email').textContent = cat.email;
     document.querySelector('.vcg-user').textContent = cat.user;
-    document.querySelector('.vcg-views').textContent = cat.nr_viz;
+    document.querySelector('.vcg-views span').textContent += cat.nr_viz;
+
+    const loggedUser = localStorage.getItem("username").toLowerCase();
+    if (loggedUser == cat.user || loggedUser == "admin")
+        document.querySelector(".vcg-btn").innerHTML = buttonHTML;
 }
 
 function Cat_showEditCat(catId)

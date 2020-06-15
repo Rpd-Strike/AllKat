@@ -4,17 +4,17 @@ function User_LoadUser()
 {
     function showLogin() {
         Utils_DeleteAllWithClass('nav-user');
-        document.querySelector('nav.nav').innerHTML += `
-    <button class="btn nav-user" onclick="User_LoginAction()">Login</button>
+        document.querySelector('nav.nav .nav-user-info').innerHTML += `
     <button class="btn nav-user" onclick="User_RegisterAction()">Register</button></nav>
+    <button class="btn nav-user" onclick="User_LoginAction()">Login</button>
     `;
     }
 
     function showLoggedUser() {
         Utils_DeleteAllWithClass('nav-user');
-        document.querySelector('nav.nav').innerHTML += `
-    <button class="btn nav-user" onclick="User_LogoutAction()">Logout</button>
-    <span class="nav-user">${localStorage.getItem("username")}</span>
+        document.querySelector('nav.nav .nav-user-info').innerHTML += `
+        <button class="btn nav-user" onclick="User_LogoutAction()">Logout</button>
+        <span class="nav-user">${localStorage.getItem("username")}</span>
     `;
     }
 

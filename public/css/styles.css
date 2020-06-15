@@ -39,18 +39,15 @@ html {
     grid-area: navbar;
 }
 
-.nav-user {
-    float: right;
-}
-
 /* Style buttons */
 .btn {
     background-color: transparent; /* Blue background */
     border: 2px solid black; /* Remove borders */
     border-radius: 9px;
-    padding: 12px 16px; /* Some padding */
+    padding: 9px 12px; /* Some padding */
     font-size: 1rem; /* Set a font size */
     cursor: pointer; /* Mouse pointer on hover */
+    margin: 0.5rem;
 }
   
 /* Darker background on mouse-over */
@@ -182,7 +179,7 @@ html {
 
 .form-style {
     max-width: 900px;
-    min-width: 430px;
+    /* min-width: 430px; */
 	padding: 10px 20px;
 	background: #f4f7f8;
 	margin: 10px auto;
@@ -333,6 +330,19 @@ html {
 
 .extra-info i:hover {
     cursor: pointer;
+}
+
+.nav-user-info {
+    float: right;
+    padding-right: 0.3rem;
+}
+
+button.btn.nav-user {
+    margin-right: 0.3rem;
+}
+
+span.nav-user {
+    text-decoration: underline;
 }
 
 /* Tablet mode */
