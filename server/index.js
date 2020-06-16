@@ -380,7 +380,7 @@ app.post("/api/cat/create", (req, res) => {
   if (checkObj.user.toLowerCase() == "guest")
     return res.send(badRequest("Guest can not create cats"));
   // console.log("Token valid");
-  checkObj.user = database.readUsers()[checkObj.user.toLowerCase()];
+  checkObj.user = database.readUsers()[checkObj.user.toLowerCase()].username;
   
   /// generate new cat id
   let catList = database.readCats();
