@@ -90,10 +90,11 @@ html {
 
 .greeting-grid {
     display: grid;
-    grid-template-rows: 1fr auto auto 2fr;
+    grid-template-rows: 1fr auto auto auto 2fr;
     grid-template-areas: 
         ". ."
-        "greeting greeting"
+        "greet-title greet-ravas"
+        "greet-text greet-text"
         "adopt rescue"
         ". .";
     width: 100%;
@@ -102,15 +103,51 @@ html {
     font-family: sans-serif;
 }
 
-.greeting-entry {
+.greet-ravas {
+    grid-area: greet-ravas;
+    text-align: center;
+    color: #006600;
+}
+
+.greet-ravas:before {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+}
+
+.greet-ravas p {
+    display: inline-block;
+    font-family: 'Vollkorn', serif;
+    font-style: italic;
+}
+
+
+.greet-ravas .fa-refresh {
+    margin-left: 1rem;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.greet-ravas .fa-refresh:hover {
+    color: red;
+}
+
+.greet-title {
     padding-right: 25%;
     font-family: 'Roboto', sans-serif;
     font-size: 2.5rem;
-    grid-area: greeting;
+    grid-area: greet-title;
     padding: 1rem;
 }
 
-.greeting-entry p {
+.greet-text {
+    grid-area: greet-text;
+    padding: 1rem;
+}
+
+.greet-text p {
     font-size: 1rem;
     width: 50%;
     color: black;
@@ -355,7 +392,7 @@ span.nav-user {
     background-color: red;
 }
 
-.greeting-entry p {
+.greet-text p {
     width: 75%;
 }
 
@@ -371,15 +408,18 @@ span.nav-user {
     background-color: yellow;
 }
 
-.greeting-entry p {
+.greet-text p {
     width: 100%;
 }
 
 .greeting-grid {
-    grid-template-rows: 1fr auto auto auto 2fr;
+    grid-template-rows: 1fr auto auto auto auto auto 2fr;
+    /* grid-template-columns: 1fr; */
     grid-template-areas: 
         "."
-        "greeting"
+        "greet-title"
+        "greet-text"
+        "greet-ravas"
         "adopt"
         "rescue"
         ".";

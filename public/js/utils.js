@@ -50,3 +50,9 @@ function Utils_HideExtraInfo()
     element = document.getElementsByClassName('extra-info')[0];
     element.style.display = 'none';
 }
+
+
+function Utils_Random(from, to)
+{
+    return from + Math.floor(Math.random() * (to - from)); 
+}
