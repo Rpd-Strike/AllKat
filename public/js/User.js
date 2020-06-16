@@ -1,7 +1,11 @@
+let User_Flag_showLastLogin = false;
+
 /// this function checks if the token in the localStorage is Valid
 /// Also sets the name of the user accordingly: (Guest, User-Name, Admin)
 function User_LoadUser()
 {
+    let UserData = {};
+
     function showLogin() {
         Utils_DeleteAllWithClass('nav-user');
         document.querySelector('nav.nav .nav-user-info').innerHTML += `
@@ -16,6 +20,23 @@ function User_LoadUser()
         <button class="btn nav-user" onclick="User_LogoutAction()">Logout</button>
         <span class="nav-user">${localStorage.getItem("username")}</span>
     `;
+        if (User_Flag_showLastLogin) {
+            let message = `Salut, te-ai logat azi pentru prima oara`;
+            const loginDate = new Date(JSON.parse(UserData.second_last_login));
+            const day = loginDate.getDate();
+            const month = loginDate.getMonth();
+            const year = loginDate.getFullYear();
+            const hour = loginDate.getHours();
+            const minutes = loginDate.getMinutes();
+            const seconds = loginDate.getSeconds();
+            if (UserData.nr_visits > 1)
+                message = `Salut, ${UserData.username}, ultima oara ai intrat de pe ip-ul ${UserData.last_ip} \
+                in ziua ${day}.${month}.${year} la ora ${hour}:${minutes}:${seconds}. 
+                Ai vizitat site-ul de ${UserData.nr_visits} ori`;
+            Home_showLastLogin(message);
+
+            User_Flag_showLastLogin = false;
+        }
     }
 
     function setGuest() {
@@ -38,6 +59,7 @@ function User_LoadUser()
             localStorage.setItem("username", resp.data.user_data.username);
             const adminString = (resp.data.user_data.username.toLowerCase() == "admin" ? "true" : "false");
             localStorage.setItem("isAdmin", adminString);
+            UserData = resp.data.user_data;
             showLoggedUser();
         }).catch(bad => {
             setGuest();
@@ -104,6 +126,7 @@ function User_LoginAttempt()
     
     Prom_UserLogin(username, password)
     .then(res => {
+        User_Flag_showLastLogin = true;
         Home_showHome();
         localStorage.setItem("token", res.data.token);
         User_LoadUser();

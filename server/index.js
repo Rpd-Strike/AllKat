@@ -111,7 +111,10 @@ app.post("/api/user/create", (req, res) => {
     password: data.password,
     username: data.username,
     blocked: false,
-    time_logged: JSON.stringify(new Date(1980, 1, 1))
+    time_logged: JSON.stringify(new Date(1980, 1, 1)),
+    second_last_login: JSON.stringify(new Date(1980, 1, 1)),
+    last_ip: "0.0.0.0",
+    nr_visits: 0
   }
   userList[userObj.username.toLowerCase()] = userObj;
   database.writeUsers(userList);
@@ -123,7 +126,7 @@ app.post("/api/user/create", (req, res) => {
 
 /// Login and on success generate token and send it back
 app.put("/api/user/login", (req, res) => {
-  data = addIpToData(req.body, req);
+  let data = addIpToData(req.body, req);
   if (!hasFields(data, ["username", "password"])) {
     return res.send(badRequest("Required fields empty"));
   }
@@ -166,7 +169,10 @@ app.put("/api/user/login", (req, res) => {
   database.writeTokens(tokenList);
 
   let newObjectUser = userList[data.username];
+  newObjectUser.second_last_login = newObjectUser.time_logged;
   newObjectUser.time_logged = JSON.stringify(new Date());
+  newObjectUser.last_ip = data.ip;
+  newObjectUser.nr_visits += 1;
   userList[data.username] = newObjectUser;
   database.writeUsers(userList);
 
@@ -374,7 +380,7 @@ app.post("/api/cat/create", (req, res) => {
   if (checkObj.user.toLowerCase() == "guest")
     return res.send(badRequest("Guest can not create cats"));
   // console.log("Token valid");
-  checkObj.user = database.readUsers()[checkObj.user.toLowerCase()];
+  checkObj.user = database.readUsers()[checkObj.user.toLowerCase()].username;
   
   /// generate new cat id
   let catList = database.readCats();
