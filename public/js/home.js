@@ -12,7 +12,7 @@ const ravas_texte = [
 
 const ravas_element = `
     <p>${ravas_texte[Utils_Random(0, ravas_texte.length)]}</p> 
-    <i class="fa fa-refresh" aria-hidden="true" onclick=showRavasText()></i>
+    <i class="fa fa-refresh" aria-hidden="true" onclick=Home_showRavasText()></i>
 `;
 
 const HomeHTML = `
@@ -40,9 +40,10 @@ const HomeHTML = `
             <button class="btn" onclick="showRescue()">Rescue</button> 
         </div>
     </div>
+    <div id="snackbar">21  132 sge..</div>
 `;
 
-function showRavasText()
+function Home_showRavasText()
 {
     const randomPos = Utils_Random(0, 6);
     document.querySelector('.greet-ravas p').textContent = ravas_texte[randomPos];
@@ -54,4 +55,13 @@ function Home_showHome()
     mainEl = document.getElementById("main");
 
     mainEl.innerHTML = HomeHTML;
+}
+
+function Home_showLastLogin(message) {
+    var x = document.getElementById("snackbar");
+
+    x.className = "show";
+    x.textContent = message;
+
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 5000);
 }
