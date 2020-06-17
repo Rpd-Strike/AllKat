@@ -114,6 +114,7 @@ app.post("/api/user/create", (req, res) => {
     time_logged: JSON.stringify(new Date(1980, 1, 1)),
     second_last_login: JSON.stringify(new Date(1980, 1, 1)),
     last_ip: "0.0.0.0",
+    second_last_ip: "0.0.0.0",
     nr_visits: 0
   }
   userList[userObj.username.toLowerCase()] = userObj;
@@ -171,6 +172,7 @@ app.put("/api/user/login", (req, res) => {
   let newObjectUser = userList[data.username];
   newObjectUser.second_last_login = newObjectUser.time_logged;
   newObjectUser.time_logged = JSON.stringify(new Date());
+  newObjectUser.second_last_ip = newObjectUser.last_ip;
   newObjectUser.last_ip = data.ip;
   newObjectUser.nr_visits += 1;
   userList[data.username] = newObjectUser;

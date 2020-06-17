@@ -23,14 +23,15 @@ function User_LoadUser()
         if (User_Flag_showLastLogin) {
             let message = `Salut, te-ai logat azi pentru prima oara`;
             const loginDate = new Date(JSON.parse(UserData.second_last_login));
-            const day = loginDate.getDate();
-            const month = loginDate.getMonth();
+            const day = ("0" + loginDate.getDate()).slice(-2);
+            console.log("DAY: " + day);
+            const month = ("0" + loginDate.getMonth()).slice(-2);
             const year = loginDate.getFullYear();
-            const hour = loginDate.getHours();
-            const minutes = loginDate.getMinutes();
-            const seconds = loginDate.getSeconds();
+            const hour = ("0" + loginDate.getHours()).slice(-2);
+            const minutes = ("0" + loginDate.getMinutes()).slice(-2);
+            const seconds = ("0" + loginDate.getSeconds()).slice(-2);
             if (UserData.nr_visits > 1)
-                message = `Salut, ${UserData.username}, ultima oara ai intrat de pe ip-ul ${UserData.last_ip} \
+                message = `Salut, ${UserData.username}, ultima oara ai intrat de pe ip-ul ${UserData.second_last_ip} \
                 in ziua ${day}.${month}.${year} la ora ${hour}:${minutes}:${seconds}. 
                 Ai vizitat site-ul de ${UserData.nr_visits} ori`;
             Home_showLastLogin(message);
