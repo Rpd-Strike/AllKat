@@ -14,6 +14,36 @@ function Dashboard_show(message = '')
     Dashboard_showToastMessage(message);
 }
 
+function Dashboard_addUser()
+{
+	Dashboard_setCreateForm();
+}
+
+function Dashboard_AddAttempt()
+{
+	Utils_ShowExtraInfo();
+    document.querySelector('.extra-info span').innerHTML = "Loading";
+
+    const username = document.getElementsByName('create-username')[0].value;
+    const password = document.getElementsByName('create-password')[0].value;
+    const repeatpassword = document.getElementsByName('create-repeatpassword')[0].value;
+
+	console.log("data: ");
+	console.log(username + " | " + password + " | " + repeatpassword + " | ");
+
+    if (password != repeatpassword) {
+        document.querySelector('.extra-info span').innerHTML = "Error: Passwords are not the same";
+        return ;
+    }
+    Prom_UserCreate(username, password)
+    .then(res => {
+        document.querySelector('.extra-info span').innerHTML = "Account created!   .";
+    })
+    .catch(err => {
+        document.querySelector('.extra-info span').innerHTML = "Error: " + err.reason;
+    })
+}
+
 function Dashboard_showToastMessage(message)
 {
 	if (!message || message == '')
@@ -32,7 +62,10 @@ function Dashboard_setShowList()
     let userGrid = document.querySelector('.users-grid');
     let createForm = document.querySelector('.create-form');
     userGrid.classList.remove("hidden");
-    createForm.classList.add("hidden");
+	createForm.classList.add("hidden");
+
+	document.querySelector(".dash-list").classList.add("dash-active");
+	document.querySelector(".dash-create").classList.remove("dash-active");
 }
 
 function Dashboard_setCreateForm()
@@ -41,6 +74,9 @@ function Dashboard_setCreateForm()
     let createForm = document.querySelector('.create-form');
     userGrid.classList.add("hidden");
     createForm.classList.remove("hidden");
+
+	document.querySelector(".dash-create").classList.add("dash-active");
+	document.querySelector(".dash-list").classList.remove("dash-active");
 }
 
 function Dashboard_setErrorContent(reason)

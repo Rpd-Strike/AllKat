@@ -40,6 +40,27 @@
     /* max-height: 300px; */
 }
 
+.fa-user-plus {
+    margin-right: 1rem;
+}
+
+.dash-list,
+.dash-create {
+    cursor: pointer;
+    background-color: rgb(119, 237, 225, 0.3);
+    padding: 0.2em;
+    border-radius: 8px;
+}
+
+.dash-list:hover,
+.dash-create:hover {
+    background-color: rgb(82, 247, 87, 0.9);
+}
+
+.dash-active {
+    background-color: rgb(208, 126, 222, 0.3);
+}
+
 .create-form
 {
     grid-area: dash-content;
@@ -145,5 +166,16 @@
         align-items: center;
         justify-items: center;
     }
+
+    .hidden
+    {
+        display: none;
+        grid-area: none;
+    }
+
+    .dash-list,
+    .dash-create {
+        font-size: smaller;
+}
     
 }

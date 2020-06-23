@@ -1,10 +1,34 @@
 <div class="dashboard-grid">
-    <h3 class="dash-list">User list</h3>
-    <h3 class="dash-create">Create new user</h3>
+    <h3 class="dash-list" onclick="Dashboard_show()">User list</h3>
+    <h3 class="dash-create" onclick="Dashboard_addUser()">Create new user</h3>
     
     <div class="users-grid"></div>
 
-    <div class="create-form hidden"></div>
+    <div class="create-form hidden">
+        <div class="form-wrapper">
+            <div class="form-style">
+                <form>
+                <fieldset>
+                <legend><i class="fas fa-user-plus"></i> <span class="form-title">Add New Account</span> </legend>
+                <label>Username</label>
+                <input class="input" type="text" name="create-username" placeholder="Your username">
+                <label>Password</label>
+                <input type="password" class="input" name="create-password" placeholder="Password">
+                <label>Retype Password</label>
+                <input type="password" class="input" name="create-repeatpassword" placeholder="Retype Password">
+                      
+                </fieldset>
+                <input class="input" type="button" value="Register" onclick="Dashboard_AddAttempt()">
+            
+                <div class="extra-info">
+                  <h4><span><span></h4>
+                  <i class="fas fa-times" onclick="Utils_HideExtraInfo()"></i>
+                </div>
+            
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="toast">
