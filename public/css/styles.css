@@ -76,6 +76,12 @@ html {
     cursor: pointer;
 }
 
+/* Admin button */
+.btn-admin-page {
+    border-color: #33cc33;
+    color: #33cc33;
+}
+
 #main {
     background: linear-gradient(rgba(255,255,255,.7), rgba(255,255,255,.4)), url("/img/cat-background.jpg");
     /* background-image: url(/img/cat-background.jpg); */
@@ -107,6 +113,7 @@ html {
     grid-area: greet-ravas;
     text-align: center;
     color: #006600;
+    padding: 1rem;
 }
 
 .greet-ravas:before {
@@ -387,8 +394,8 @@ span.nav-user {
 /* The snackbar - position it at the bottom and in the middle of the screen */
 #snackbar {
     visibility: hidden; /* Hidden by default. Visible on click */
-    width: 250px;
-    margin-left: -125px;
+    width: 350px;
+    margin-left: -175px;
     background-color: #333; /* Black background color */
     color: #fff; /* White text color */
     text-align: center; /* Centered text */

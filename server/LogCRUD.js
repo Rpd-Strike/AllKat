@@ -90,6 +90,12 @@ module.exports = {
         console.log(message);
     },
 
+    getAllUsers: function(data)
+    {
+        let message = HEADER + `AdminAPI | Get all USERS`;
+        console.log(message);
+    },
+
     addView: function(cat, ip)
     {
         let message = HEADER + `CatAPI | AddView from IP: ${ip} to cat: ${cat.id}`;

@@ -300,6 +300,8 @@ app.delete("/api/admin", (req, res) => {
 
 app.put("/api/admin/block", (req, res) => {
   const data = addIpToData(req.body, req);
+  console.log("Received data:");
+  console.log(data);
   if (!hasFields(data, ["token", "user", "status"]))
     return res.send(badRequest("Missing required fields"));
   data.user = data.user.toLowerCase();
@@ -315,6 +317,9 @@ app.put("/api/admin/block", (req, res) => {
     return res.send(badRequest("Inexistent user"));
 
   if (data.status == true) {
+    // first, you cant block the admin
+    if (data.user.toLowerCase() == 'admin')
+      return res.send(badRequest("You can't block the admin"));
     // delete tokens if he's getting blocked
     let tokenList = database.readTokens();
     Object.keys(tokenList).forEach(tok => {
@@ -349,6 +354,8 @@ app.put("/api/admin/reset", (req, res) => {
   let userList = database.readUsers();
   if (!userList.hasOwnProperty(data.user))
     return res.send(badRequest("Inexistent user"));
+  if (data.password.length < 1)
+    return res.send(badRequest("Password has length 0"));
 
   userList[data.user].password = data.password;
   database.writeUsers(userList);
@@ -356,7 +363,26 @@ app.put("/api/admin/reset", (req, res) => {
   LogCRUD.resetUser(data);
   res.send(validRequest({info: "Reset Password",
                          user: data.user}));
-})
+});
+
+app.get("/api/admin/all/:token", (req, res) => {
+  const data = addIpToData(req.body, req);
+  data.token = req.params.token;
+  if (!hasFields(data, ["token"]))
+    return res.send(badRequest("Missing required fields"));
+
+  const userData = getValidAndUserFromToken(data.token);
+  if (!userData.valid)
+    return res.send(badRequest("Bad Token"));
+  if (userData.user.toLowerCase() != "admin")
+    return res.send(badRequest("You are not admin"));
+
+  const userList = database.readUsers();
+
+  LogCRUD.getAllUsers(data);
+  res.send(validRequest({info: "List of all users",
+                         user_list: userList}));
+});
 
 /// =====================  Cats API  ======================================================
 

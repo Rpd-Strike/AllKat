@@ -14,9 +14,13 @@ function User_LoadUser()
     `;
     }
 
+    const adminButtonHTML = `
+        <button class="btn nav-user btn-admin-page" onclick="User_AdminAction()">Dashboard</button>`;
+
     function showLoggedUser() {
         Utils_DeleteAllWithClass('nav-user');
         document.querySelector('nav.nav .nav-user-info').innerHTML += `
+        ${localStorage.getItem("username").toLowerCase() == 'admin' ? adminButtonHTML : ''}
         <button class="btn nav-user" onclick="User_LogoutAction()">Logout</button>
         <span class="nav-user">${localStorage.getItem("username")}</span>
     `;
@@ -177,4 +181,9 @@ function User_RegisterAction()
 {
     Utils_ClearMain();
     document.getElementById("main").innerHTML = RegisterHTML;
+}
+
+function User_AdminAction()
+{
+    Dashboard_show();
 }
