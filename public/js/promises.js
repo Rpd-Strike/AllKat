@@ -177,3 +177,65 @@ async function Prom_UtilGetHTML(filepath)
         xmlhttp.send();
     });
 }
+
+async function Prom_GetAllUsers(token)
+{
+    console.log("Promise getting all users information");
+    const promise_getter = () => fetch('api/admin/all/' + token, {
+        method : "GET",
+        headers : {
+            "Content-type": "application/json"
+        }
+    });
+    return wrapperPromise(promise_getter);
+}
+
+async function Prom_SetUserBlock(token, username, status)
+{
+    console.log("Promise set user status");
+    const promise_getter = () => fetch('api/admin/block', {
+        method : "PUT",
+        headers : {
+            "Content-type": "application/json"
+        },
+        body : JSON.stringify({
+            token: token,
+            user: username,
+            status: status
+        })
+    });
+    return wrapperPromise(promise_getter);
+}
+
+async function Prom_SetPassword(token, username, password)
+{
+    console.log("Promise set user status");
+    const promise_getter = () => fetch('api/admin/reset', {
+        method : "PUT",
+        headers : {
+            "Content-type": "application/json"
+        },
+        body : JSON.stringify({
+            token: token,
+            user: username,
+            password: password
+        })
+    });
+    return wrapperPromise(promise_getter);
+}
+
+async function Prom_DeleteUser(token, username)
+{
+    console.log("Promise set user status");
+    const promise_getter = () => fetch('api/admin', {
+        method : "DELETE",
+        headers : {
+            "Content-type": "application/json"
+        },
+        body : JSON.stringify({
+            token: token,
+            user: username
+        })
+    });
+    return wrapperPromise(promise_getter);
+}
