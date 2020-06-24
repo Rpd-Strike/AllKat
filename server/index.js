@@ -42,8 +42,8 @@ function badRequest(err_description)
 
 function validRequest(data)
 {
-  console.log("validRequest data:");
-  console.log(data);
+  // console.log("validRequest data:");
+  // console.log(data);
   return {status: "OK",
           data: data}
 }
@@ -232,7 +232,7 @@ app.get("/api/user/all_online", (req, res) => {
   
   function addSecondsSinceLogin(username, uList) {
     let seconds = ((new Date()) - (new Date(JSON.parse(uList[username].time_logged)))) / 1000;
-    console.log("seeing that user: " + username + " is logged in for " + seconds + " seconds");
+    // console.log("seeing that user: " + username + " is logged in for " + seconds + " seconds");
     return {time_logged: uList[username].time_logged,
             username: username,
             since_login: seconds};
@@ -259,7 +259,7 @@ app.get("/api/user/test_token/:token", (req, res) => {
     return res.send(badRequest("Required field missing: token"));
 
   const tokenList = database.readTokens();
-  LogCRUD.testToken(data.token);
+  LogCRUD.testToken(data);
   if (tokenList.hasOwnProperty(data.token)) {
     let sentUser = database.readUsers()[tokenList[data.token].username.toLowerCase()];
     delete sentUser.password;
@@ -277,6 +277,8 @@ app.delete("/api/admin", (req, res) => {
   if (!hasFields(data, ["token", "user"]))
     return res.send(badRequest("Missing required fields"));
 
+  data.user = String(data.user.toLowerCase());
+
   userData = getValidAndUserFromToken(data.token);
   if (!userData.valid)
     return res.send(badRequest("Bad Token"));
@@ -284,7 +286,7 @@ app.delete("/api/admin", (req, res) => {
     return res.send(badRequest("You are not admin"));
   
   let userList = database.readUsers();
-  if (!userList.hasOwnProperty(data.user))
+  if (!userList.hasOwnProperty(data.user.toLowerCase()))
     return res.send(badRequest("Inexistent user"));
   
   /// delete all its tokens
@@ -509,7 +511,7 @@ app.put("/api/cat/:id", (req, res) => {
   catsList[data.cat.id] = data.cat;
   database.writeCats(catsList);
   
-  LogCRUD.updatedCat(data);  //// TODO add username here
+  LogCRUD.updatedCat(data, checkObj.user);  //// TODO add username here
   res.send(validRequest({info: "Updated cat",
                                 cat: data.cat}));
 });
@@ -592,6 +594,7 @@ app.put("/api/cat/view/:catId", (req, res) => {
 
 // creeam database
 InitScript.touchDatabase();
+InitScript.touchLogs();
 
 // Pornim server-ul
 app.listen(PORT, () =>
