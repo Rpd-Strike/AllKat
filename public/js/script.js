@@ -11,6 +11,10 @@ function startScript()
     Home_showHome();
 
     User_LoadUser();
+
+    /// watcher for online list
+    let onlineInterval = new Interval(Online_watcher, 1000);
+    onlineInterval.start();
 }
 
 startScript();

@@ -27,6 +27,13 @@ function Rend_CreateNav()
 
     navbar.appendChild(rescue);
 
+    let online = document.createElement('button');
+    online.setAttribute('class', 'btn');
+    online.setAttribute('onclick', 'Online_show()');
+    online.innerHTML = '<i class="fas fa-globe-americas"></i>';
+
+    navbar.appendChild(online);
+
     let userElements = document.createElement('div');
     userElements.setAttribute('class', 'nav-user-info');
     navbar.appendChild(userElements);

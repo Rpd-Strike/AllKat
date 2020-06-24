@@ -1,0 +1,53 @@
+.online-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(auto-fill, 1fr);
+    justify-items: center; 
+}
+
+.online-card
+{
+    display: grid;
+
+    grid-gap: 0.5em;
+    grid-template-rows: repeat(2, auto);
+    grid-template-columns: auto auto;
+    padding: 1.6em;
+    margin: 1rem;
+    margin-bottom: 2rem;
+    background-color: rgba(205, 239, 250, 0.45);
+    border-radius: 25px;
+    filter: drop-shadow(0 0 0.75rem rgba(205, 239, 250, 0.582));
+
+    /* max-height: 300px; */
+}
+
+.online-name {
+    grid-row: 1;
+    grid-column: 1;
+
+    text-align: center;
+    color: purple;
+    /* margin: 0px; */
+}
+
+.online-time {
+    grid-row: 1;
+    grid-column: 2;
+}
+
+    /* Phone mode */
+@media screen and (max-width: 767px){
+
+    .online-grid
+    {        
+        width: 95%;
+    
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(auto-fill, 1fr);
+        align-items: center;
+        justify-items: center;
+    }
+    
+}

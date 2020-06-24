@@ -37,7 +37,7 @@ function Dashboard_AddAttempt()
     }
     Prom_UserCreate(username, password)
     .then(res => {
-        document.querySelector('.extra-info span').innerHTML = "Account created!   .";
+        document.querySelector('.extra-info span').innerHTML = "Account created!";
     })
     .catch(err => {
         document.querySelector('.extra-info span').innerHTML = "Error: " + err.reason;

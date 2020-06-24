@@ -10,6 +10,7 @@ const TOKEN_LENGTH = 15;
 const MINUTES_ONLINE = 5;
 const PORT = "3000";
 const CAT_FIELDS = ["name", "race", "gender", "city", "favorite_toy", "full_address", "email", "image"];
+const GENESIS_DATE = new Date(1980, 1, 1);
 
 // Middleware
 app.use(morgan("tiny"));
@@ -111,8 +112,8 @@ app.post("/api/user/create", (req, res) => {
     password: data.password,
     username: data.username,
     blocked: false,
-    time_logged: JSON.stringify(new Date(1980, 1, 1)),
-    second_last_login: JSON.stringify(new Date(1980, 1, 1)),
+    time_logged: JSON.stringify(GENESIS_DATE),
+    second_last_login: JSON.stringify(GENESIS_DATE),
     last_ip: "0.0.0.0",
     second_last_ip: "0.0.0.0",
     nr_visits: 0
@@ -208,6 +209,11 @@ app.delete("/api/user/logout", (req, res) => {
   if (!validUserAndToken(data.username, data.token)) {
     return res.send(badRequest("Username and Token mismatch or invalid"));
   }
+
+  /// mark time_logged old date;
+  let userDB = database.readUsers();
+  userDB[data.username].time_logged = JSON.stringify(GENESIS_DATE);
+  database.writeUsers(userDB);
 
   let tokenList = database.readTokens();
   delete tokenList[data.token];

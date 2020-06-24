@@ -2,7 +2,7 @@
 /// this function takes a fetch promise and wraps it to handle basic failures of it
 function wrapperPromise(fetch_getter)
 {
-    console.log("wrapper Promise");
+    // console.log("wrapper Promise");
     
     return fetch_getter()
         .catch(err => Promise.reject(badResponse("Network or server error")))
@@ -236,6 +236,17 @@ async function Prom_DeleteUser(token, username)
             token: token,
             user: username
         })
+    });
+    return wrapperPromise(promise_getter);
+}
+
+async function Prom_AllUsersOnline()
+{
+    const promise_getter = () => fetch('api/user/all_online', {
+        method : "GET",
+        headers : {
+            "Content-type": "application/json"
+        }
     });
     return wrapperPromise(promise_getter);
 }
