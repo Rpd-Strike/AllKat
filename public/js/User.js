@@ -17,6 +17,7 @@ function User_LoadUser()
     const adminButtonHTML = `
         <button class="btn nav-user btn-admin-page" onclick="User_AdminAction()">Dashboard</button>`;
 
+    /// TASK 3
     function showLoggedUser() {
         Utils_DeleteAllWithClass('nav-user');
         document.querySelector('nav.nav .nav-user-info').innerHTML += `
@@ -51,6 +52,8 @@ function User_LoadUser()
         localStorage.setItem("isAdmin", "false");
         showLogin();
     }
+
+    /// TASK 3
     /// check validity of token and set username
     if (localStorage.getItem("token") === null) {
         setGuest();

@@ -106,6 +106,7 @@ function Cat_showEditCat(catId)
     });
 }
 
+/// TASK 1 vizualizari
 function Cat_showViewCat(catId, newsrc)
 {
     mainEl = document.getElementById("main")

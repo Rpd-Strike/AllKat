@@ -43,6 +43,7 @@ const HomeHTML = `
     <div id="snackbar">21  132 sge..</div>
 `;
 
+/// TASK 2 ravas
 function Home_showRavasText()
 {
     const randomPos = Utils_Random(0, 6);
@@ -57,6 +58,7 @@ function Home_showHome()
     mainEl.innerHTML = HomeHTML;
 }
 
+/// TASK 3 Last login
 function Home_showLastLogin(message) {
     var x = document.getElementById("snackbar");
 

@@ -49,6 +49,7 @@ function Adopt_renderCat(fatherNode, cat)
     </button>
     `;
 
+    /// truc pentru src actualizat in caz de eroare
     const html = `
         <a class="darken">
             <img class="actual" src="${cat.image}" 
@@ -75,6 +76,7 @@ function Adopt_renderCat(fatherNode, cat)
     fatherNode.appendChild(catEl);
 }
 
+/// TASK 1 vizualizari
 function Adopt_showCat(catId, newsrc)
 {
     // console.log(newsrc);
