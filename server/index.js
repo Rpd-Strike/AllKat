@@ -253,7 +253,7 @@ app.get("/api/user/all_online", (req, res) => {
     const data = addSecondsSinceLogin(username, userList);
     const logout_date = new Date(JSON.parse(userList[username].time_logout));
     const time_since_logout = (new Date() - logout_date) / 1000;
-    console.log("Time: " + username + " | " + data.since_login + " | " + time_since_logout);
+    // console.log("Time: " + username + " | " + data.since_login + " | " + time_since_logout);
     if (data.since_login <= MINUTES_ONLINE * 60) {
       if (time_since_logout >= data.since_login) {
         onlineList.push(data);
