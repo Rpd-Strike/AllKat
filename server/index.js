@@ -303,6 +303,9 @@ app.delete("/api/admin", (req, res) => {
   let userList = database.readUsers();
   if (!userList.hasOwnProperty(data.user.toLowerCase()))
     return res.send(badRequest("Inexistent user"));
+
+  if (data.user.toLowerCase() == 'admin')
+    return res.send(badRequest("Can't delete Admin"));
   
   /// delete all its tokens
   let tokenList = database.readTokens();
