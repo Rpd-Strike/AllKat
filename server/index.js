@@ -42,8 +42,8 @@ function badRequest(err_description)
 
 function validRequest(data)
 {
-  console.log("validRequest data:");
-  console.log(data);
+  // console.log("validRequest data:");
+  // console.log(data);
   return {status: "OK",
           data: data}
 }
@@ -114,6 +114,7 @@ app.post("/api/user/create", (req, res) => {
     blocked: false,
     time_logged: JSON.stringify(GENESIS_DATE),
     second_last_login: JSON.stringify(GENESIS_DATE),
+    time_logout: JSON.stringify(GENESIS_DATE),
     last_ip: "0.0.0.0",
     second_last_ip: "0.0.0.0",
     nr_visits: 0
@@ -171,12 +172,20 @@ app.put("/api/user/login", (req, res) => {
   database.writeTokens(tokenList);
 
   let newObjectUser = userList[data.username];
+  // let lastDate = new Date(JSON.parse(newObjectUser.time_logged));
+  // console.log(newObjectUser);
+  // if (lastDate.getFullYear() > 2000) {
+  //   console.log("CASCADING DATE LOGIN");
+  //   newObjectUser.second_last_login = newObjectUser.time_logged;
+  // }
   newObjectUser.second_last_login = newObjectUser.time_logged;
   newObjectUser.time_logged = JSON.stringify(new Date());
   newObjectUser.second_last_ip = newObjectUser.last_ip;
   newObjectUser.last_ip = data.ip;
   newObjectUser.nr_visits += 1;
   userList[data.username] = newObjectUser;
+  // console.log("after mod");
+  // console.log(newObjectUser);
   database.writeUsers(userList);
 
   /// Log info and send back request
@@ -212,7 +221,7 @@ app.delete("/api/user/logout", (req, res) => {
 
   /// mark time_logged old date;
   let userDB = database.readUsers();
-  userDB[data.username].time_logged = JSON.stringify(GENESIS_DATE);
+  userDB[data.username].time_logout = JSON.stringify(new Date());
   database.writeUsers(userDB);
 
   let tokenList = database.readTokens();
@@ -232,7 +241,7 @@ app.get("/api/user/all_online", (req, res) => {
   
   function addSecondsSinceLogin(username, uList) {
     let seconds = ((new Date()) - (new Date(JSON.parse(uList[username].time_logged)))) / 1000;
-    console.log("seeing that user: " + username + " is logged in for " + seconds + " seconds");
+    // console.log("seeing that user: " + username + " is logged in for " + seconds + " seconds");
     return {time_logged: uList[username].time_logged,
             username: username,
             since_login: seconds};
@@ -242,8 +251,14 @@ app.get("/api/user/all_online", (req, res) => {
   let onlineList = [];
   Object.keys(userList).forEach(username => {
     const data = addSecondsSinceLogin(username, userList);
+    const logout_date = new Date(JSON.parse(userList[username].time_logout));
+    const time_since_logout = (new Date() - logout_date) / 1000;
+    console.log("Time: " + username + " | " + data.since_login + " | " + time_since_logout);
     if (data.since_login <= MINUTES_ONLINE * 60) {
-      onlineList.push(data);
+      if (time_since_logout >= data.since_login) {
+        onlineList.push(data);
+        console.log("OK");
+      }
     }
   });
   LogCRUD.getOnlineUsers(data, onlineList.length);
@@ -259,7 +274,7 @@ app.get("/api/user/test_token/:token", (req, res) => {
     return res.send(badRequest("Required field missing: token"));
 
   const tokenList = database.readTokens();
-  LogCRUD.testToken(data.token);
+  LogCRUD.testToken(data);
   if (tokenList.hasOwnProperty(data.token)) {
     let sentUser = database.readUsers()[tokenList[data.token].username.toLowerCase()];
     delete sentUser.password;
@@ -277,6 +292,8 @@ app.delete("/api/admin", (req, res) => {
   if (!hasFields(data, ["token", "user"]))
     return res.send(badRequest("Missing required fields"));
 
+  data.user = String(data.user.toLowerCase());
+
   userData = getValidAndUserFromToken(data.token);
   if (!userData.valid)
     return res.send(badRequest("Bad Token"));
@@ -284,8 +301,11 @@ app.delete("/api/admin", (req, res) => {
     return res.send(badRequest("You are not admin"));
   
   let userList = database.readUsers();
-  if (!userList.hasOwnProperty(data.user))
+  if (!userList.hasOwnProperty(data.user.toLowerCase()))
     return res.send(badRequest("Inexistent user"));
+
+  if (data.user.toLowerCase() == 'admin')
+    return res.send(badRequest("Can't delete Admin"));
   
   /// delete all its tokens
   let tokenList = database.readTokens();
@@ -509,7 +529,7 @@ app.put("/api/cat/:id", (req, res) => {
   catsList[data.cat.id] = data.cat;
   database.writeCats(catsList);
   
-  LogCRUD.updatedCat(data);  //// TODO add username here
+  LogCRUD.updatedCat(data, checkObj.user);  //// TODO add username here
   res.send(validRequest({info: "Updated cat",
                                 cat: data.cat}));
 });
@@ -592,6 +612,7 @@ app.put("/api/cat/view/:catId", (req, res) => {
 
 // creeam database
 InitScript.touchDatabase();
+InitScript.touchLogs();
 
 // Pornim server-ul
 app.listen(PORT, () =>

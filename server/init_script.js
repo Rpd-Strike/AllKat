@@ -1,5 +1,6 @@
 const fs = require('fs');
-const db = require('./database')
+const db = require('./database');
+const LogCRUD = require('./LogCRUD');
 
 module.exports = {
     touchDatabase: function()
@@ -52,5 +53,10 @@ module.exports = {
         })
 
         console.log("Database ready!");
+    },
+
+    touchLogs()
+    {
+        LogCRUD.touchLogFile();
     }
 }

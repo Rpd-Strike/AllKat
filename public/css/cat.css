@@ -24,7 +24,7 @@
 
     filter: drop-shadow(0 0 0.75rem rgba(157, 33, 240, 0.582));
 
-    max-height: 300px;
+    /* max-height: 300px; */
 }
 
 .cat-card img
