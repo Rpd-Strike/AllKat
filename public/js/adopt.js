@@ -24,7 +24,7 @@ function Adopt_renderEmptyMsg()
 
     element = document.createElement("div");
     paragraf = document.createElement("h4");
-    paragraf.innerText = "Ooops! Looks like there are no cats!";
+    paragraf.innerText = "Ooops! Looks like there are no cats! Go and rescue them, then add them in the 'Rescue' section";
 
     element.appendChild(paragraf);
     catsEl.appendChild(element);
@@ -66,7 +66,7 @@ function Adopt_renderCat(fatherNode, cat)
         <p class="card-name"><span>Name:</span> ${cat.name}</p>
         <p class="card-race"><span>Race:</span> ${cat.race}</p>
         <p class="card-gender"><span>Gender:</span> ${cat.gender}</p>
-        <p class="card-fav"><span>Fav. toy:</span> ${cat.favorite_toy}</p>
+        <p class="card-fav"><span>About:</span> ${cat.favorite_toy}</p>
     `;
 
     catEl = document.createElement("div");
